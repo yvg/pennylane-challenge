@@ -12,12 +12,35 @@ export const useInvoicesListBehaviour = () => {
     setInvoicesList(data.invoices)
   }, [api])
 
+  const deleteInvoice = useCallback(
+    async (id: number) => {
+      api
+        .deleteInvoice(id)
+        .then(fetchInvoices)
+        .catch((error) => {
+          // A no-op error handler
+          // Ideally, we would show a message to the user
+        })
+    },
+    [api, fetchInvoices]
+  )
+
+  const onClickDelete = useCallback(
+    (id: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault()
+      deleteInvoice(id)
+    },
+    [deleteInvoice]
+  )
+
   useEffect(() => {
     fetchInvoices()
-  }, [fetchInvoices])
+  }, [])
 
   return {
-    handlers: {},
+    handlers: {
+      onClickDelete,
+    },
 
     states: {
       invoicesList,
