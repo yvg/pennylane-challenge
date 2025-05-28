@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import { InvoicesList } from './components/InvoicesList/InvoicesList'
 import InvoiceShow from './components/InvoiceShow'
-import './App.css'
 
 // import GettingStarted from './GettingStarted'
 

@@ -1,6 +1,7 @@
 import { useApi } from 'api'
 import { Invoice } from 'types'
 import { useEffect, useCallback, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 export const InvoicesList = (): React.ReactElement => {
   const api = useApi()
@@ -35,7 +36,8 @@ export const InvoicesList = (): React.ReactElement => {
       <tbody>
         {invoicesList.map((invoice) => (
           <tr key={invoice.id}>
-            <td>{invoice.id}</td>
+
+            <td><Link to={`/invoice/${invoice.id}`}>{invoice.id}</Link></td>
             <td>
               {invoice.customer?.first_name} {invoice.customer?.last_name}
             </td>
