@@ -1,21 +1,11 @@
-import { useApi } from 'api'
-import { Invoice } from 'types'
-import { useEffect, useCallback, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useInvoicesListBehaviour } from './InvoicesList.behaviour'
 
 export const InvoicesList = (): React.ReactElement => {
-  const api = useApi()
 
-  const [invoicesList, setInvoicesList] = useState<Invoice[]>([])
-
-  const fetchInvoices = useCallback(async () => {
-    const { data } = await api.getInvoices()
-    setInvoicesList(data.invoices)
-  }, [api])
-
-  useEffect(() => {
-    fetchInvoices()
-  }, [fetchInvoices])
+  const {
+    states: { invoicesList },
+  } = useInvoicesListBehaviour()
 
   return (
     <table className="table table-bordered table-striped">
@@ -36,7 +26,6 @@ export const InvoicesList = (): React.ReactElement => {
       <tbody>
         {invoicesList.map((invoice) => (
           <tr key={invoice.id}>
-
             <td><Link to={`/invoice/${invoice.id}`}>{invoice.id}</Link></td>
             <td>
               {invoice.customer?.first_name} {invoice.customer?.last_name}
