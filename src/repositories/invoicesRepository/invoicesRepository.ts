@@ -8,6 +8,7 @@ class InvoiceRepositoryImpl implements InvoiceRepository {
   private apiClient
 
   constructor() {
+    // TODO: Make this injectable to allow testing outside React env.
     this.apiClient = getAxiosClient(config.apiUrl, config.apiToken)
   }
 
