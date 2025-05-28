@@ -2,7 +2,7 @@ import { useApi } from 'api'
 import { Invoice } from 'types'
 import { useEffect, useCallback, useState } from 'react'
 
-const InvoicesList = (): React.ReactElement => {
+export const InvoicesList = (): React.ReactElement => {
   const api = useApi()
 
   const [invoicesList, setInvoicesList] = useState<Invoice[]>([])
@@ -20,6 +20,7 @@ const InvoicesList = (): React.ReactElement => {
     <table className="table table-bordered table-striped">
       <thead>
         <tr>
+          {/* Ideally this should be in a locale file */}
           <th>Id</th>
           <th>Customer</th>
           <th>Address</th>
@@ -54,5 +55,3 @@ const InvoicesList = (): React.ReactElement => {
     </table>
   )
 }
-
-export default InvoicesList
