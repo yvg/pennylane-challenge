@@ -2,8 +2,8 @@ import { useState } from 'react'
 
 import { Customer, Product } from 'types'
 
-import CustomerAutocomplete from 'app/components/CustomerAutocomplete'
-import ProductAutocomplete from 'app/components/ProductAutocomplete'
+import CustomerAutocomplete from 'app/screens/InvoiceShow/components/CustomerAutocomplete'
+import ProductAutocomplete from 'app/screens/InvoiceShow/components/ProductAutocomplete'
 
 const GettingStarted = () => {
   const [customer, setCustomer] = useState<Customer | null>(null)

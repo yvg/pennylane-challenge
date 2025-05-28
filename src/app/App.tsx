@@ -1,9 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import { InvoicesList } from './screens/InvoicesList/InvoicesList'
-import InvoiceShow from './screens/InvoiceShow'
-
-// import GettingStarted from './GettingStarted'
+import { InvoiceShow } from './screens/InvoiceShow/InvoiceShow'
 
 function App() {
   return (

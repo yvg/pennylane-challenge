@@ -41,6 +41,7 @@ export const InvoicesList = (): React.ReactElement => {
             <td>{invoice.paid ? 'Yes' : 'No'}</td>
             <td>{invoice.date}</td>
             <td>{invoice.deadline}</td>
+            <td>{invoice.invoice_lines.length}</td>
             <td><button onClick={onClickDelete(invoice.id)} disabled={invoice.finalized}>Delete</button></td>
           </tr>
         ))}

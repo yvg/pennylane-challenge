@@ -15,7 +15,7 @@ const root = createRoot(domRoot!);
 root.render(
   <React.StrictMode>
     <ApiProvider
-      url="https://jean-test-api.herokuapp.com/"
+      url={config.apiUrl}
       token={config.apiToken}
     >
       <App />

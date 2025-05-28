@@ -17,6 +17,19 @@ interface ApiProviderProps {
   children?: ReactNode
 }
 
+export const getAxiosClient = (url: string, token: string): Client => {
+  return new OpenAPIClientAxios({
+    /* @ts-ignore */
+    definition,
+    withServer: { url },
+    axiosConfigDefaults: {
+      headers: {
+        'X-SESSION': token,
+      },
+    },
+  }).initSync<Client>()
+}
+
 export const ApiProvider: React.FC<ApiProviderProps> = ({
   url,
   token,

@@ -1,25 +1,29 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useParams } from 'react-router'
 
-import { useApi } from 'api'
-import { Invoice } from 'types'
+import { CustomerInformation } from 'app/screens/InvoiceShow/components/CustomerInformation/CustomerInformation'
+import { ViewModelContextProvider } from './viewModel/InvoiceShow.ViewModelProvider'
+import { getInvoiceShowViewModel } from './viewModel/InvoiceShow.ViewModel.provider'
+import { StatusInformation } from './components/StatusInformation/StatusInformation'
+
+// TODO: Error boundaries should be used here
 
 export const InvoiceShow = () => {
+  const invoiceViewModel = getInvoiceShowViewModel()
   const { id } = useParams<{ id: string }>()
-  const api = useApi()
-  const [invoice, setInvoice] = useState<Invoice>()
 
   useEffect(() => {
-    api.getInvoice(id).then(({ data }) => {
-      setInvoice(data)
-    })
-  }, [api, id])
+    if (id) {
+      invoiceViewModel.fetchInvoice(id)
+    }
+  }, [id, invoiceViewModel])
 
   return (
-    <div>
-      <pre>{JSON.stringify(invoice ?? '', null, 2)}</pre>
-    </div>
+    <ViewModelContextProvider viewModelFactory={() => invoiceViewModel}>
+      <div>
+        <CustomerInformation />
+        <StatusInformation />
+      </div>
+    </ViewModelContextProvider>
   )
 }
-
-export default InvoiceShow

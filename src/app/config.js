@@ -4,5 +4,6 @@ if (!apiToken) {
 }
 
 export const config = {
+  apiUrl: 'https://jean-test-api.herokuapp.com/',
   apiToken: apiToken,
 }
