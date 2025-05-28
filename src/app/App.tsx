@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-import { InvoicesList } from './components/InvoicesList/InvoicesList'
-import InvoiceShow from './components/InvoiceShow'
+import { InvoicesList } from './screens/InvoicesList/InvoicesList'
+import InvoiceShow from './screens/InvoiceShow'
 
 // import GettingStarted from './GettingStarted'
 
