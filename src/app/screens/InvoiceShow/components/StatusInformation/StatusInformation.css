@@ -1,0 +1,12 @@
+.status-information {
+  background: #eee;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: space-between;
+
+  & > * {
+    flex-grow: 1;
+  }
+}
