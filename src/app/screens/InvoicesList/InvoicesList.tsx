@@ -16,6 +16,7 @@ export const InvoicesList = (): React.ReactElement => {
           <th>Id</th>
           <th>Customer</th>
           <th>Address</th>
+          <th>Customer ID</th>
           <th>Total</th>
           <th>Tax</th>
           <th>Finalized</th>
@@ -35,6 +36,7 @@ export const InvoicesList = (): React.ReactElement => {
               {invoice.customer?.address}, {invoice.customer?.zip_code}{' '}
               {invoice.customer?.city}
             </td>
+            <td>{invoice.customer_id}</td>
             <td>{invoice.total}</td>
             <td>{invoice.tax}</td>
             <td>{invoice.finalized ? 'Yes' : 'No'}</td>
