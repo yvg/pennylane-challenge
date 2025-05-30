@@ -10,7 +10,6 @@ export const CustomerInformation = () => {
     return null
   }
 
-  console.log('editable:', editable)
   return (
     <div>
       <h1>{customer.first_name} {customer?.last_name}</h1>

@@ -17,6 +17,7 @@ interface IInvoiceShowViewModel {
   setPaid(paid: boolean): void
   updateInvoice(): Promise<void>
   deleteInvoiceLine(lineId: number): Promise<void>
+  setInvoiceLineQuantity(lineId: number, quantity: number): Promise<void>
 }
 
 // TODO: Why is the compiler not complaining about missing interface fields?
@@ -37,6 +38,7 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
   }
 
   private setInvoice(invoice: Invoice): void {
+    console.log('set invoice', invoice)
     this.invoice.next(invoice)
   }
 
@@ -91,6 +93,10 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
     this.updateInvoicePartially({ paid })
   }
 
+  public setFinalized(): void {
+    this.updateInvoicePartially({ finalized: true })
+  }
+
   async deleteInvoiceLine(lineId: number): Promise<void> {
     const invoice = this.getInvoice()
     // Ideally this should be part of a service pattern, but for simplicity of the exercice, let's handle it here.
@@ -113,6 +119,36 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
           invoice_lines_attributes: invoice.invoice_lines.map((line) => ({
             id: line.id,
             _destroy: line.id === lineId,
+            product_id: line.product_id,
+            quantity: line.quantity,
+          })),
+        })
+      this.setInvoice(updatedInvoiceFromNetwork)
+    }
+  }
+
+  async setInvoiceLineQuantity(
+    lineId: number,
+    quantity: number
+  ): Promise<void> {
+    const invoice = this.getInvoice()
+    // TODO: check customer_id typing
+    if (invoice && invoice.customer_id) {
+      const updatedLines = invoice.invoice_lines.map((line) =>
+        line.id === lineId ? { ...line, quantity } : line
+      )
+      this.setInvoice({ ...invoice, invoice_lines: updatedLines })
+      const updatedInvoiceFromNetwork =
+        await this.invoiceRepository.updateInvoice(invoice.id.toString(), {
+          id: invoice.id,
+          customer_id: invoice.customer_id,
+          finalized: invoice.finalized,
+          paid: invoice.paid,
+          date: invoice.date,
+          deadline: invoice.deadline,
+          invoice_lines_attributes: updatedLines.map((line) => ({
+            id: line.id,
+            _destroy: false, // Not deleting, just updating
             product_id: line.product_id,
             quantity: line.quantity,
           })),

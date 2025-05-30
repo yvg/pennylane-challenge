@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import { InvoicesList } from './screens/InvoicesList/InvoicesList'
 import { InvoiceShow } from './screens/InvoiceShow/InvoiceShow'
+import './App.css'
 // import GettingStarted from './GettingStarted'
 
 function App() {

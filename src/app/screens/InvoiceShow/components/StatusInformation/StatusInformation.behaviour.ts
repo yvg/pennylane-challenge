@@ -9,51 +9,60 @@ type Status = {
   invoice_id: string
 }
 
-export const useStatusInformationBehaviour = () => {
-  const viewModel = useViewModel()
-
-  const [status, setStatus] = useState<Status | null>(null)
-
-  const invoice = useSyncExternalStore(
-    (callback) => viewModel.subscribeInvoice(callback),
-    () => viewModel.getInvoice()
-  )
-
-  useEffect(() => {
-    if (invoice) {
-      setStatus({
-        finalized: invoice.finalized,
-        paid: invoice.paid,
-        date: invoice.date,
-        deadline: invoice.deadline,
-        invoice_id: invoice.id.toString(),
-      })
-    }
-  }, [invoice])
-
-  const onChangeDate = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = event.target.value
-    viewModel.setDate(newDate)
+type UseStatusInformationBehaviourReturnType = {
+  states: {
+    status: Status | null
+    editable: boolean
   }
-
-  const onChangeDeadline = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newDeadline = event.target.value
-    viewModel.setDeadline(newDeadline)
-  }
-
-  const onChangePaid = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newPaid = event.target.checked
-    viewModel.setPaid(newPaid)
-  }
-
-  return {
-    states: {
-      status,
-    },
-    handlers: {
-      onChangeDate,
-      onChangeDeadline,
-      onChangePaid,
-    },
+  handlers: {
+    onChangeDate: (event: React.ChangeEvent<HTMLInputElement>) => void
+    onChangeDeadline: (event: React.ChangeEvent<HTMLInputElement>) => void
   }
 }
+
+export const useStatusInformationBehaviour =
+  (): UseStatusInformationBehaviourReturnType => {
+    const viewModel = useViewModel()
+
+    const [status, setStatus] = useState<Status | null>(null)
+    const [editable, setEditable] = useState<boolean>(false)
+
+    const invoice = useSyncExternalStore(
+      (callback) => viewModel.subscribeInvoice(callback),
+      () => viewModel.getInvoice()
+    )
+
+    useEffect(() => {
+      if (invoice) {
+        setStatus({
+          finalized: invoice.finalized,
+          paid: invoice.paid,
+          date: invoice.date,
+          deadline: invoice.deadline,
+          invoice_id: invoice.id.toString(),
+        })
+        setEditable(!invoice.finalized)
+      }
+    }, [invoice])
+
+    const onChangeDate = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newDate = event.target.value
+      viewModel.setDate(newDate)
+    }
+
+    const onChangeDeadline = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newDeadline = event.target.value
+      viewModel.setDeadline(newDeadline)
+    }
+
+    return {
+      states: {
+        status,
+        editable,
+      },
+      handlers: {
+        onChangeDate,
+        onChangeDeadline,
+      },
+    }
+  }

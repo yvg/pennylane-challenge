@@ -7,15 +7,21 @@ type InvoiceLines = Invoice['invoice_lines']
 type UseInvoicelinesBehaviourReturnType = {
   states: {
     invoiceLines: InvoiceLines
+    displayInvoiceLines: boolean
+    editable: boolean
   }
   handlers: {
     onClickDeleteButton: (invoiceLineId: number) => void
+    onChangeQuantity: (invoiceLineId: number, quantity: string) => void
   }
 }
 
 export const useInvoicelinesBehaviour =
   (): UseInvoicelinesBehaviourReturnType => {
     const [invoiceLines, setInvoiceLines] = useState<InvoiceLines>([])
+    const [displayInvoiceLines, setDisplayInvoiceLines] =
+      useState<boolean>(false)
+    const [editable, setEditable] = useState<boolean>(false)
     const viewModel = useViewModel()
 
     const invoice = useSyncExternalStore(
@@ -26,6 +32,8 @@ export const useInvoicelinesBehaviour =
     useEffect(() => {
       if (invoice) {
         setInvoiceLines(invoice.invoice_lines)
+        setDisplayInvoiceLines(invoice.invoice_lines.length > 0)
+        setEditable(!invoice.finalized)
       }
     }, [invoice])
 
@@ -33,12 +41,19 @@ export const useInvoicelinesBehaviour =
       viewModel.deleteInvoiceLine(invoiceLineId)
     }
 
+    const onChangeQuantity = (invoiceLineId: number, quantity: string) => {
+      viewModel.setInvoiceLineQuantity(invoiceLineId, parseInt(quantity, 10))
+    }
+
     return {
       states: {
         invoiceLines,
+        displayInvoiceLines,
+        editable,
       },
       handlers: {
         onClickDeleteButton,
+        onChangeQuantity,
       },
     }
   }

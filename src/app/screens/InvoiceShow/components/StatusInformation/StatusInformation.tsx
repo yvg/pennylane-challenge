@@ -4,10 +4,9 @@ import './StatusInformation.css'
 
 export const StatusInformation = () => {
 
-  const { states: { status }, handlers: {
+  const { states: { status, editable }, handlers: {
     onChangeDate,
     onChangeDeadline,
-    onChangePaid
   } } = useStatusInformationBehaviour()
 
   if (!status) {
@@ -20,12 +19,11 @@ export const StatusInformation = () => {
         <p>Invoice ID: <strong>{status.invoice_id}</strong></p>
       </div>
       <div>
-        <p><label>Date: <input type="date" defaultValue={status.date ?? ''} onChange={onChangeDate} /></label></p>
-        <p><label>Deadline: <input type="date" defaultValue={status.deadline ?? ''} onChange={onChangeDeadline} /></label></p>
+        <p><label>Date: <input disabled={!editable} type="date" defaultValue={status.date ?? ''} onChange={onChangeDate} /></label></p>
+        <p><label>Deadline: <input disabled={!editable} type="date" defaultValue={status.deadline ?? ''} onChange={onChangeDeadline} /></label></p>
       </div>
       <div>
         <p>Finalized: {status.finalized ? 'Yes': 'Nope'}</p>
-        <p><label>Paid: <input type="checkbox" defaultChecked={status.paid} onChange={onChangePaid} /></label></p>
       </div>
     </div>
   )

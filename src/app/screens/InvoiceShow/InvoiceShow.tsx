@@ -6,6 +6,9 @@ import { ViewModelContextProvider } from './viewModel/InvoiceShow.ViewModelProvi
 import { getInvoiceShowViewModel } from './viewModel/InvoiceShow.ViewModel.provider'
 import { StatusInformation } from './components/StatusInformation/StatusInformation'
 import { Invoicelines } from './components/InvoiceLines/InvoiceLines'
+import { InvoiceActions } from './components/InvoiceActions/InvoiceActions'
+
+import './InvoiceShow.css'
 
 // TODO: Error boundaries should be used here
 
@@ -22,7 +25,10 @@ export const InvoiceShow = () => {
   return (
     <ViewModelContextProvider viewModelFactory={() => invoiceViewModel}>
       <div>
-        <CustomerInformation />
+        <div className="invoice-header">
+          <CustomerInformation />
+          <InvoiceActions />
+        </div>
         <StatusInformation />
         <Invoicelines />
       </div>
