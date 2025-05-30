@@ -1,4 +1,5 @@
 import { getAxiosClient } from 'api'
+import { Client } from 'api/gen/client'
 import { config } from 'app/config'
 import { Invoice } from 'types'
 
@@ -24,20 +25,13 @@ export type InvoiceRepository = {
 }
 
 export class InvoiceRepositoryImpl implements InvoiceRepository {
-  private apiClient
-
-  constructor() {
-    // TODO: Make this injectable to allow testing outside React env.
-    this.apiClient = getAxiosClient(config.apiUrl, config.apiToken)
-  }
+  constructor(private apiClient: Client) {}
 
   // TODO: Type Invoice internally, don't rely on networks types
   async getInvoice(id: string): Promise<Invoice> {
     const response = await this.apiClient.getInvoice(id)
     if (response.status !== 200) {
-      throw new Error(
-        `Failed to fetch invoice with ID ${id}: ${response.statusText}`
-      )
+      throw new Error(`Failed to fetch invoice with ID ${id}`)
     }
     return response.data
   }
@@ -45,9 +39,7 @@ export class InvoiceRepositoryImpl implements InvoiceRepository {
   async updateInvoice(id: string, data: UpdateInvoiceData): Promise<Invoice> {
     const response = await this.apiClient.putInvoice(id, { invoice: data })
     if (response.status !== 200) {
-      throw new Error(
-        `Failed to update invoice with ID ${id}: ${response.statusText}`
-      )
+      throw new Error(`Failed to update invoice with ID ${id}`)
     }
     return response.data
   }
@@ -55,9 +47,7 @@ export class InvoiceRepositoryImpl implements InvoiceRepository {
   async deleteInvoice(id: string): Promise<true> {
     const response = await this.apiClient.deleteInvoice(id)
     if (response.status !== 204) {
-      throw new Error(
-        `Failed to delete invoice with ID ${id}: ${response.statusText}`
-      )
+      throw new Error(`Failed to delete invoice with ID ${id}`)
     }
 
     return true

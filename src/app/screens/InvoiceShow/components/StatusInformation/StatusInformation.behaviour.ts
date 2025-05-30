@@ -12,7 +12,7 @@ type Status = {
 type UseStatusInformationBehaviourReturnType = {
   states: {
     status: Status | null
-    editable: boolean
+    disabled: boolean
   }
   handlers: {
     onChangeDate: (event: React.ChangeEvent<HTMLInputElement>) => void
@@ -25,7 +25,7 @@ export const useStatusInformationBehaviour =
     const viewModel = useViewModel()
 
     const [status, setStatus] = useState<Status | null>(null)
-    const [editable, setEditable] = useState<boolean>(false)
+    const [disabled, setDisabled] = useState<boolean>(false)
 
     const invoice = useSyncExternalStore(
       (callback) => viewModel.subscribeInvoice(callback),
@@ -41,7 +41,7 @@ export const useStatusInformationBehaviour =
           deadline: invoice.deadline,
           invoice_id: invoice.id.toString(),
         })
-        setEditable(!invoice.finalized)
+        setDisabled(invoice.finalized)
       }
     }, [invoice])
 
@@ -58,7 +58,7 @@ export const useStatusInformationBehaviour =
     return {
       states: {
         status,
-        editable,
+        disabled,
       },
       handlers: {
         onChangeDate,

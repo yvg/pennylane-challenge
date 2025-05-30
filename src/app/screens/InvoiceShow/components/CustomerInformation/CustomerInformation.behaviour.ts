@@ -5,7 +5,7 @@ import { useViewModel } from '../../viewModel/InvoiceShow.ViewModelProvider'
 type UseCustomerInformationBehaviourReturnType = {
   states: {
     customer?: Invoice['customer']
-    editable: boolean
+    disabled: boolean
   }
   handlers: {
     onClickEditCustomer: () => void
@@ -16,7 +16,7 @@ export const useCustomerInformationBehaviour =
   (): UseCustomerInformationBehaviourReturnType => {
     // TODO: properly type the state
     const [customer, setCustomer] = useState<Invoice['customer']>()
-    const [editable, setEditable] = useState(false)
+    const [disabled, setDisabled] = useState(false)
 
     const viewModel = useViewModel()
 
@@ -28,7 +28,7 @@ export const useCustomerInformationBehaviour =
     useEffect(() => {
       if (invoice) {
         setCustomer(invoice.customer)
-        setEditable(!invoice.finalized)
+        setDisabled(invoice.finalized)
       }
     }, [invoice])
 
@@ -43,7 +43,7 @@ export const useCustomerInformationBehaviour =
     return {
       states: {
         customer,
-        editable,
+        disabled,
       },
       handlers: {
         onClickEditCustomer,

@@ -4,7 +4,7 @@ import './InvoiceLines.css'
 
 export const Invoicelines = () => {
   const {
-    states: { invoiceLines, displayInvoiceLines, editable },
+    states: { invoiceLines, displayInvoiceLines, disabled },
     handlers: { onClickDeleteButton, onChangeQuantity },
   } = useInvoicelinesBehaviour()
   return (
@@ -28,19 +28,19 @@ export const Invoicelines = () => {
           {invoiceLines.map((line) => (
             <tr key={line.id}>
               <td>{line.label}</td>
-              <td><input disabled={!editable} defaultValue={line.quantity} onBlur={(event) => onChangeQuantity(line.id, event.target.value)} size={3} /></td>
+              <td><input disabled={disabled} defaultValue={line.quantity} onBlur={(event) => onChangeQuantity(line.id, event.target.value)} size={3} /></td>
               <td>{line.unit}</td>
               <td>{line.product.unit_price_without_tax}</td>
               <td>{line.vat_rate.toString()}%</td>
               <td>{line.product.unit_price}</td>
               <td>{line.price}</td>
-              <th><button disabled={!editable} onClick={() => onClickDeleteButton(line.id)}>Delete</button></th>
+              <th><button disabled={disabled} onClick={() => onClickDeleteButton(line.id)}>Delete</button></th>
             </tr>
           ))}
           </tbody>
         </table>
       }
-      <button disabled={!editable} onClick={() => console.log('Add item')}>Add item</button>
+      <button disabled={disabled} onClick={() => console.log('Add item')}>Add item</button>
     </div>
   )
 }

@@ -8,7 +8,7 @@ type UseInvoicelinesBehaviourReturnType = {
   states: {
     invoiceLines: InvoiceLines
     displayInvoiceLines: boolean
-    editable: boolean
+    disabled: boolean
   }
   handlers: {
     onClickDeleteButton: (invoiceLineId: number) => void
@@ -21,7 +21,7 @@ export const useInvoicelinesBehaviour =
     const [invoiceLines, setInvoiceLines] = useState<InvoiceLines>([])
     const [displayInvoiceLines, setDisplayInvoiceLines] =
       useState<boolean>(false)
-    const [editable, setEditable] = useState<boolean>(false)
+    const [disabled, setDisabled] = useState<boolean>(false)
     const viewModel = useViewModel()
 
     const invoice = useSyncExternalStore(
@@ -33,7 +33,7 @@ export const useInvoicelinesBehaviour =
       if (invoice) {
         setInvoiceLines(invoice.invoice_lines)
         setDisplayInvoiceLines(invoice.invoice_lines.length > 0)
-        setEditable(!invoice.finalized)
+        setDisabled(invoice.finalized)
       }
     }, [invoice])
 
@@ -49,7 +49,7 @@ export const useInvoicelinesBehaviour =
       states: {
         invoiceLines,
         displayInvoiceLines,
-        editable,
+        disabled,
       },
       handlers: {
         onClickDeleteButton,

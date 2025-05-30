@@ -2,7 +2,7 @@ import { useCustomerInformationBehaviour } from "./CustomerInformation.behaviour
 
 export const CustomerInformation = () => {
   const {
-    states: { customer, editable },
+    states: { customer, disabled },
     handlers: { onClickEditCustomer },
   } = useCustomerInformationBehaviour()
 
@@ -17,7 +17,7 @@ export const CustomerInformation = () => {
       <p>{customer.zip_code}</p>
       <p>{customer.city}</p>
       <p>{customer.country}</p>
-      {editable && <button onClick={onClickEditCustomer}>Edit customer</button>}
+      {!disabled && <button onClick={onClickEditCustomer}>Edit customer</button>}
     </div>
   )
 }

@@ -4,7 +4,7 @@ import './StatusInformation.css'
 
 export const StatusInformation = () => {
 
-  const { states: { status, editable }, handlers: {
+  const { states: { status, disabled }, handlers: {
     onChangeDate,
     onChangeDeadline,
   } } = useStatusInformationBehaviour()
@@ -19,8 +19,8 @@ export const StatusInformation = () => {
         <p>Invoice ID: <strong>{status.invoice_id}</strong></p>
       </div>
       <div>
-        <p><label>Date: <input disabled={!editable} type="date" defaultValue={status.date ?? ''} onChange={onChangeDate} /></label></p>
-        <p><label>Deadline: <input disabled={!editable} type="date" defaultValue={status.deadline ?? ''} onChange={onChangeDeadline} /></label></p>
+        <p><label>Date: <input disabled={disabled} type="date" defaultValue={status.date ?? ''} onChange={onChangeDate} /></label></p>
+        <p><label>Deadline: <input disabled={disabled} type="date" defaultValue={status.deadline ?? ''} onChange={onChangeDeadline} /></label></p>
       </div>
       <div>
         <p>Finalized: {status.finalized ? 'Yes': 'Nope'}</p>
