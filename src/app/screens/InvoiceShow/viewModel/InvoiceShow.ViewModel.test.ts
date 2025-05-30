@@ -65,11 +65,12 @@ describe('InvoiceShowViewModel', () => {
 
   it('should update the invoice when changing the date', async () => {
     // given
-    const viewModel = getViewModel()
+    const viewModel = getViewModel({
+      date: '1999-12-31',
+    })
 
     // when
     await viewModel.fetchInvoice('12345')
-    viewModel.setDate('2022-11-15')
     viewModel.setDate('2023-10-01')
 
     // then
