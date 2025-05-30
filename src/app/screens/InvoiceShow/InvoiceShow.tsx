@@ -5,6 +5,7 @@ import { CustomerInformation } from 'app/screens/InvoiceShow/components/Customer
 import { ViewModelContextProvider } from './viewModel/InvoiceShow.ViewModelProvider'
 import { getInvoiceShowViewModel } from './viewModel/InvoiceShow.ViewModel.provider'
 import { StatusInformation } from './components/StatusInformation/StatusInformation'
+import { Invoicelines } from './components/InvoiceLines/InvoiceLines'
 
 // TODO: Error boundaries should be used here
 
@@ -23,6 +24,7 @@ export const InvoiceShow = () => {
       <div>
         <CustomerInformation />
         <StatusInformation />
+        <Invoicelines />
       </div>
     </ViewModelContextProvider>
   )

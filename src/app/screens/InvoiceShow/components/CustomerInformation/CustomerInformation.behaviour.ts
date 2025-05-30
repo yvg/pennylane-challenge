@@ -26,7 +26,6 @@ export const useCustomerInformationBehaviour =
     )
 
     useEffect(() => {
-      console.log('invoice changed:', invoice)
       if (invoice) {
         setCustomer(invoice.customer)
         setEditable(!invoice.finalized)

@@ -11,8 +11,12 @@ interface IInvoiceShowViewModel {
   fetchInvoice(id: string): Promise<void>
   getInvoice(): Invoice | null
   subscribeInvoice(onStoreChange: OnStoreChange): Unsubscribe
-
   setCustomerId(customerId: number): void
+  setDate(date: string | null): void
+  setDeadline(deadline: string | null): void
+  setPaid(paid: boolean): void
+  updateInvoice(): Promise<void>
+  deleteInvoiceLine(lineId: number): Promise<void>
 }
 
 export class InvoiceShowViewModel implements IInvoiceShowViewModel {
@@ -64,7 +68,7 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
         paid: updatedInvoice.paid,
         date: updatedInvoice.date,
         deadline: updatedInvoice.deadline,
-        // TODO: lines
+        // TODO: Handle invoice lines here?
         invoice_lines_attributes: [],
       })
     this.setInvoice(updatedInvoiceFromNetwork)
@@ -84,5 +88,29 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
 
   public setPaid(paid: boolean): void {
     this.updateInvoicePartially({ paid })
+  }
+
+  async deleteInvoiceLine(lineId: number): Promise<void> {
+    const invoice = this.getInvoice()
+    // Ideally this should be part of a service pattern, but for simplicity of the exercice, let's handle it here.
+    // TODO: check customer_id typing
+    if (invoice && invoice.customer_id) {
+      const updatedInvoiceFromNetwork =
+        await this.invoiceRepository.updateInvoice(invoice.id.toString(), {
+          id: invoice.id,
+          customer_id: invoice.customer_id,
+          finalized: invoice.finalized,
+          paid: invoice.paid,
+          date: invoice.date,
+          deadline: invoice.deadline,
+          invoice_lines_attributes: invoice.invoice_lines.map((line) => ({
+            id: line.id,
+            _destroy: line.id === lineId,
+            product_id: line.product_id,
+            quantity: line.quantity,
+          })),
+        })
+      this.setInvoice(updatedInvoiceFromNetwork)
+    }
   }
 }

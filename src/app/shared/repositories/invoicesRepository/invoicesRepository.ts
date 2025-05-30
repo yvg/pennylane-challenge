@@ -9,8 +9,12 @@ type UpdateInvoiceData = {
   paid: boolean
   date: string | null
   deadline: string | null
-  // TODO: type the structure of invoice_lines_attributes
-  invoice_lines_attributes?: []
+  invoice_lines_attributes: {
+    id: number
+    _destroy: boolean
+    product_id: number
+    quantity: number
+  }[]
 }
 
 export type InvoiceRepository = {
