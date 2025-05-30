@@ -1,8 +1,9 @@
 import type { InvoiceRepository } from 'app/shared/repositories/invoicesRepository/invoicesRepository'
 import { InvoiceShowViewModel } from './InvoiceShow.ViewModel'
-import { get } from 'lodash'
 
 type Invoice = Awaited<ReturnType<InvoiceRepository['getInvoice']>> | null
+type Unit = 'hour' | 'day' | 'piece'
+type VatRate = '0' | '5.5' | '10' | '20'
 
 const getMockedInvoiceRepositoryResponse = (
   overrides?: Partial<Invoice>
@@ -27,6 +28,7 @@ const getMockedInvoiceRepository = (
     .mockResolvedValue(
       getMockedInvoiceRepositoryResponse(getInvoiceResponseOverrides)
     ),
+  // TODO: This only works because methods relying on it are not async, but it should be mocked.
   updateInvoice: jest.fn(),
 })
 
@@ -37,6 +39,53 @@ const getViewModel = (
     getMockedInvoiceRepository(getInvoiceResponseOverrides)
   )
 }
+
+const buildInvoiceLines = () => ({
+  invoice_lines: [
+    {
+      id: 1,
+      invoice_id: 12345,
+      product_id: 101,
+      quantity: 2,
+      label: 'Product A',
+      unit: 'piece' as Unit,
+      price: '10.00',
+      vat_rate: '20' as VatRate,
+      tax: '20',
+      product: {
+        id: 67,
+        label: 'Tesla Model S',
+        vat_rate: '20' as VatRate,
+        // TODO: fix hack
+        unit: 'piece' as Unit,
+        unit_price: '1980',
+        unit_price_without_tax: '1800',
+        unit_tax: '180',
+      },
+    },
+    {
+      id: 2,
+      invoice_id: 12345,
+      product_id: 102,
+      quantity: 1,
+      label: 'Product B',
+      unit: 'piece' as Unit,
+      price: '20.00',
+      vat_rate: '20' as VatRate,
+      tax: '20',
+      product: {
+        id: 68,
+        label: 'Tesla Model X',
+        vat_rate: '20' as VatRate,
+        // TODO: fix hack
+        unit: 'piece' as Unit,
+        unit_price: '2500',
+        unit_price_without_tax: '2300',
+        unit_tax: '200',
+      },
+    },
+  ],
+})
 
 describe('InvoiceShowViewModel', () => {
   beforeEach(() => {
@@ -112,5 +161,20 @@ describe('InvoiceShowViewModel', () => {
     // then
     const revertedInvoice = viewModel.getInvoice()
     expect(revertedInvoice?.paid).toBe(true)
+  })
+
+  it('should delete an invoice line', async () => {
+    // given
+    const viewModel = getViewModel(buildInvoiceLines())
+
+    // when
+    await viewModel.fetchInvoice('12345')
+    // TODO: use await
+    viewModel.deleteInvoiceLine(1)
+
+    // then
+    const resultingInvoice = viewModel.getInvoice()
+    expect(resultingInvoice?.invoice_lines).toHaveLength(1)
+    expect(resultingInvoice?.invoice_lines[0].id).toBe(2)
   })
 })

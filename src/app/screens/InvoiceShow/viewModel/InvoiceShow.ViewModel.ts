@@ -19,6 +19,7 @@ interface IInvoiceShowViewModel {
   deleteInvoiceLine(lineId: number): Promise<void>
 }
 
+// TODO: Why is the compiler not complaining about missing interface fields?
 export class InvoiceShowViewModel implements IInvoiceShowViewModel {
   private invoice = new BehaviorSubject<Invoice | null>(null)
 
@@ -95,6 +96,12 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
     // Ideally this should be part of a service pattern, but for simplicity of the exercice, let's handle it here.
     // TODO: check customer_id typing
     if (invoice && invoice.customer_id) {
+      this.setInvoice({
+        ...invoice,
+        invoice_lines: invoice.invoice_lines.filter(
+          (line) => line.id !== lineId
+        ),
+      })
       const updatedInvoiceFromNetwork =
         await this.invoiceRepository.updateInvoice(invoice.id.toString(), {
           id: invoice.id,
