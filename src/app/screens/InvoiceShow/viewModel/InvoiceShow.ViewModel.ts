@@ -38,6 +38,10 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
   }
 
   private setInvoice(invoice: Invoice): void {
+    if (invoice && invoice.finalized) {
+      throw new Error('Cannot update a finalized invoice')
+    }
+
     this.invoice.next(invoice)
   }
 
@@ -59,7 +63,11 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
 
   async updateInvoice() {
     const updatedInvoice = this.getInvoice()
-    if (!updatedInvoice || !updatedInvoice.customer_id) {
+    if (
+      !updatedInvoice ||
+      !updatedInvoice.customer_id ||
+      updatedInvoice.finalized
+    ) {
       throw new Error('No invoice to update')
     }
     const updatedInvoiceFromNetwork =

@@ -246,4 +246,19 @@ describe('InvoiceShowViewModel', () => {
     // then
     expect(viewModel.getInvoice()).toBeDefined()
   })
+
+  it('should throw an error when updating a finalized invoice', async () => {
+    // given
+    const viewModel = getViewModel({
+      finalized: true,
+    })
+
+    // when
+    await viewModel.fetchInvoice('12345')
+
+    // then
+    expect(() => {
+      viewModel.setDate('2023-10-01')
+    }).toThrow('Cannot update a finalized invoice')
+  }
 })
