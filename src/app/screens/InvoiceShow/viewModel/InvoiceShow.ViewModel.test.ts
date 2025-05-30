@@ -260,5 +260,5 @@ describe('InvoiceShowViewModel', () => {
     expect(() => {
       viewModel.setDate('2023-10-01')
     }).toThrow('Cannot update a finalized invoice')
-  }
+  })
 })
