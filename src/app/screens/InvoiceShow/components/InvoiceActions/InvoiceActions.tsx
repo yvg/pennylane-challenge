@@ -6,6 +6,7 @@ export const InvoiceActions = () => {
 
   const { states: {
     isDisabled,
+    isFinalized,
     isPaid
   }, handlers : {
     onClickMarkAsPaid,
@@ -16,7 +17,7 @@ export const InvoiceActions = () => {
     <div className="invoice-actions">
       <button disabled={isDisabled} onClick={onClickMarkAsPaid}>{isPaid ? "Mark as unpaid" : "Mark as Paid"}</button>
       <button disabled={isDisabled} onClick={onClickDelete}>Delete</button>
-      <button disabled={isDisabled} onClick={onClickFinalize}>Finalize</button>
+      <button disabled={isDisabled} onClick={onClickFinalize}>{isFinalized ? "Finalized" : "Mark as Finalized"}</button>
     </div>
   )
 }

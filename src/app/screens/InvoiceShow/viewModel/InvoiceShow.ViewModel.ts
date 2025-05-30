@@ -38,7 +38,6 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
   }
 
   private setInvoice(invoice: Invoice): void {
-    console.log('set invoice', invoice)
     this.invoice.next(invoice)
   }
 
@@ -154,6 +153,22 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
           })),
         })
       this.setInvoice(updatedInvoiceFromNetwork)
+    }
+  }
+
+  async deleteInvoice(): Promise<void> {
+    const invoice = this.getInvoice()
+    if (invoice) {
+      await this.invoiceRepository
+        .deleteInvoice(invoice.id.toString())
+        .then(() => {
+          this.setInvoice(null)
+        })
+        .catch(() => {
+          throw new Error(`Failed to delete invoice`)
+        })
+    } else {
+      throw new Error('No invoice to delete')
     }
   }
 }

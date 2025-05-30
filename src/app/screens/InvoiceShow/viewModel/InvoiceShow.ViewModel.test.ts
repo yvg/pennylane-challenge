@@ -20,6 +20,23 @@ const getMockedInvoiceRepositoryResponse = (
   ...overrides,
 })
 
+const getMockedInvoiceRepositoryToOverrideMethods = ({
+  getInvoice,
+  updateInvoice,
+  deleteInvoice,
+}: {
+  getInvoice?: InvoiceRepository['getInvoice']
+  updateInvoice?: InvoiceRepository['updateInvoice']
+  deleteInvoice?: InvoiceRepository['deleteInvoice']
+}): InvoiceRepository => ({
+  getInvoice:
+    getInvoice ??
+    jest.fn().mockResolvedValue(getMockedInvoiceRepositoryResponse()),
+  // TODO: This only works because methods relying on it are not async, but it should be mocked.
+  updateInvoice: updateInvoice ?? jest.fn(),
+  deleteInvoice: deleteInvoice ?? jest.fn(),
+})
+
 const getMockedInvoiceRepository = (
   getInvoiceResponseOverrides?: Partial<Invoice>
 ): InvoiceRepository => ({
@@ -30,6 +47,7 @@ const getMockedInvoiceRepository = (
     ),
   // TODO: This only works because methods relying on it are not async, but it should be mocked.
   updateInvoice: jest.fn(),
+  deleteInvoice: jest.fn(),
 })
 
 const getViewModel = (
@@ -176,5 +194,56 @@ describe('InvoiceShowViewModel', () => {
     const resultingInvoice = viewModel.getInvoice()
     expect(resultingInvoice?.invoice_lines).toHaveLength(1)
     expect(resultingInvoice?.invoice_lines[0].id).toBe(2)
+  })
+
+  it('should finalize the invoice', async () => {
+    // given
+    const viewModel = getViewModel({
+      finalized: false,
+    })
+
+    // when
+    await viewModel.fetchInvoice('12345')
+    viewModel.setFinalized()
+
+    // then
+    const resultingInvoice = viewModel.getInvoice()
+    expect(resultingInvoice?.finalized).toBe(true)
+  })
+
+  it('should delete the invoice if it succeeds', async () => {
+    // given
+    const viewModel = new InvoiceShowViewModel(
+      getMockedInvoiceRepositoryToOverrideMethods({
+        deleteInvoice: jest.fn().mockResolvedValue(true),
+      })
+    )
+
+    // when
+    await viewModel.fetchInvoice('12345')
+    await viewModel.deleteInvoice()
+
+    // then
+    expect(viewModel.getInvoice()).toBeNull()
+  })
+
+  it('should not delete the invoice if it fails', async () => {
+    // given
+    const viewModel = new InvoiceShowViewModel(
+      getMockedInvoiceRepositoryToOverrideMethods({
+        deleteInvoice: jest.fn().mockRejectedValue(new Error('Network error')),
+      })
+    )
+
+    // when
+    await viewModel.fetchInvoice('12345')
+    try {
+      await viewModel.deleteInvoice()
+    } catch (error) {
+      // no-op
+    }
+
+    // then
+    expect(viewModel.getInvoice()).toBeDefined()
   })
 })

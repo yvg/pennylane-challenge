@@ -1,9 +1,11 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { useViewModel } from '../../viewModel/InvoiceShow.ViewModelProvider'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 type UseInvoiceActionsBehaviourReturnType = {
   states: {
     isDisabled: boolean
+    isFinalized: boolean
     isPaid: boolean
   }
   handlers: {
@@ -15,7 +17,9 @@ type UseInvoiceActionsBehaviourReturnType = {
 
 export const useInvoiceActionsBehaviour =
   (): UseInvoiceActionsBehaviourReturnType => {
-    const [isDisabled, setisDisabled] = useState<boolean>(false)
+    const navigate = useNavigate()
+    const [isDisabled, setIsDisabled] = useState<boolean>(false)
+    const [isFinalized, setIsFinalized] = useState<boolean>(false)
     const [isPaid, setIsPaid] = useState<boolean>(false)
 
     const viewModel = useViewModel()
@@ -26,8 +30,9 @@ export const useInvoiceActionsBehaviour =
 
     useEffect(() => {
       if (invoice) {
-        setisDisabled(invoice.finalized)
+        setIsDisabled(invoice.finalized)
         setIsPaid(invoice.paid)
+        setIsFinalized(invoice.finalized)
       }
     }, [invoice])
 
@@ -35,7 +40,14 @@ export const useInvoiceActionsBehaviour =
       viewModel.setPaid(!invoice?.paid)
     }
     const onClickDelete = () => {
-      // viewModel.deleteInvoice()
+      viewModel
+        .deleteInvoice()
+        .then(() => {
+          navigate('/')
+        })
+        .catch(() => {
+          alert('Something went wrong while deleting the invoice')
+        })
     }
     const onClickFinalize = () => {
       viewModel.setFinalized()
@@ -44,6 +56,7 @@ export const useInvoiceActionsBehaviour =
     return {
       states: {
         isDisabled,
+        isFinalized,
         isPaid,
       },
       handlers: {

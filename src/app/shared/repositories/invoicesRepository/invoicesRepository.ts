@@ -20,6 +20,7 @@ type UpdateInvoiceData = {
 export type InvoiceRepository = {
   getInvoice(id: string): Promise<Invoice>
   updateInvoice(id: string, data: UpdateInvoiceData): Promise<Invoice>
+  deleteInvoice(id: string): Promise<true>
 }
 
 export class InvoiceRepositoryImpl implements InvoiceRepository {
@@ -49,5 +50,16 @@ export class InvoiceRepositoryImpl implements InvoiceRepository {
       )
     }
     return response.data
+  }
+
+  async deleteInvoice(id: string): Promise<true> {
+    const response = await this.apiClient.deleteInvoice(id)
+    if (response.status !== 204) {
+      throw new Error(
+        `Failed to delete invoice with ID ${id}: ${response.statusText}`
+      )
+    }
+
+    return true
   }
 }
