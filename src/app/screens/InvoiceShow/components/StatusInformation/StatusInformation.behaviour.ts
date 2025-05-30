@@ -37,8 +37,8 @@ export const useStatusInformationBehaviour = () => {
   }
 
   const onChangeDeadline = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newDate = event.target.value
-    viewModel.setDeadline(newDate)
+    const newDeadline = event.target.value
+    viewModel.setDeadline(newDeadline)
   }
 
   const onChangePaid = (event: React.ChangeEvent<HTMLInputElement>) => {

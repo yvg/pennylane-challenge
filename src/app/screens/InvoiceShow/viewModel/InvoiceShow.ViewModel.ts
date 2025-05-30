@@ -1,11 +1,8 @@
 import { BehaviorSubject } from 'rxjs'
 
-import { InvoiceRepositorySingleton } from 'app/shared/repositories/invoicesRepository/invoicesRepository'
+import type { InvoiceRepository } from 'app/shared/repositories/invoicesRepository/invoicesRepository'
 
-type RepositoryInvoice = typeof InvoiceRepositorySingleton.getInvoice
-
-type Invoice = Awaited<ReturnType<RepositoryInvoice>> | null
-type Customer = number
+type Invoice = Awaited<ReturnType<InvoiceRepository['getInvoice']>> | null
 
 export type OnStoreChange = () => void
 export type Unsubscribe = () => void
@@ -20,6 +17,8 @@ interface IInvoiceShowViewModel {
 
 export class InvoiceShowViewModel implements IInvoiceShowViewModel {
   private invoice = new BehaviorSubject<Invoice | null>(null)
+
+  constructor(private invoiceRepository: InvoiceRepository) {}
 
   private updateInvoicePartially(updateField: Partial<Invoice>): void {
     const invoice = this.getInvoice()
@@ -48,7 +47,7 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
   }
 
   async fetchInvoice(id: string) {
-    const invoice = await InvoiceRepositorySingleton.getInvoice(id)
+    const invoice = await this.invoiceRepository.getInvoice(id)
     this.setInvoice(invoice)
   }
 
@@ -58,19 +57,16 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
       throw new Error('No invoice to update')
     }
     const updatedInvoiceFromNetwork =
-      await InvoiceRepositorySingleton.updateInvoice(
-        updatedInvoice.id.toString(),
-        {
-          id: updatedInvoice.id,
-          customer_id: updatedInvoice.customer_id,
-          finalized: updatedInvoice.finalized,
-          paid: updatedInvoice.paid,
-          date: updatedInvoice.date,
-          deadline: updatedInvoice.deadline,
-          // TODO: lines
-          invoice_lines_attributes: [],
-        }
-      )
+      await this.invoiceRepository.updateInvoice(updatedInvoice.id.toString(), {
+        id: updatedInvoice.id,
+        customer_id: updatedInvoice.customer_id,
+        finalized: updatedInvoice.finalized,
+        paid: updatedInvoice.paid,
+        date: updatedInvoice.date,
+        deadline: updatedInvoice.deadline,
+        // TODO: lines
+        invoice_lines_attributes: [],
+      })
     this.setInvoice(updatedInvoiceFromNetwork)
   }
 

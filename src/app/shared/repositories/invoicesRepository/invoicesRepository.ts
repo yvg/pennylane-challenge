@@ -13,12 +13,12 @@ type UpdateInvoiceData = {
   invoice_lines_attributes?: []
 }
 
-interface InvoiceRepository {
+export type InvoiceRepository = {
   getInvoice(id: string): Promise<Invoice>
   updateInvoice(id: string, data: UpdateInvoiceData): Promise<Invoice>
 }
 
-class InvoiceRepositoryImpl implements InvoiceRepository {
+export class InvoiceRepositoryImpl implements InvoiceRepository {
   private apiClient
 
   constructor() {
@@ -47,5 +47,3 @@ class InvoiceRepositoryImpl implements InvoiceRepository {
     return response.data
   }
 }
-
-export const InvoiceRepositorySingleton = new InvoiceRepositoryImpl()
