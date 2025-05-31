@@ -1,0 +1,13 @@
+.invoiceList-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #f8f9fa;
+  flex-direction: row;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
