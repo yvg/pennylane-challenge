@@ -1,6 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { useViewModel } from '../../viewModel/InvoiceShow.ViewModelProvider'
-import { Invoice } from 'types'
+import { Product, Invoice } from 'types'
 
 type InvoiceLines = Invoice['invoice_lines']
 
@@ -13,6 +13,7 @@ type UseInvoicelinesBehaviourReturnType = {
   handlers: {
     onClickDeleteButton: (invoiceLineId: number) => void
     onChangeQuantity: (invoiceLineId: number, quantity: string) => void
+    onChangeProduct: (invoiceLineIneId: number, product: number) => void
   }
 }
 
@@ -42,7 +43,13 @@ export const useInvoicelinesBehaviour =
     }
 
     const onChangeQuantity = (invoiceLineId: number, quantity: string) => {
-      viewModel.setInvoiceLineQuantity(invoiceLineId, parseInt(quantity, 10))
+      if (quantity.length) {
+        viewModel.setInvoiceLineQuantity(invoiceLineId, parseInt(quantity, 10))
+      }
+    }
+
+    const onChangeProduct = (invoiceLineId: number, productId: number) => {
+      viewModel.setInvoiceLineProductId(invoiceLineId, productId)
     }
 
     return {
@@ -52,6 +59,7 @@ export const useInvoicelinesBehaviour =
         disabled,
       },
       handlers: {
+        onChangeProduct,
         onClickDeleteButton,
         onChangeQuantity,
       },

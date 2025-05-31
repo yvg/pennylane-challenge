@@ -262,4 +262,17 @@ describe('InvoiceShowViewModel', () => {
       viewModel.setDate('2023-10-01')
     }).toThrow('Cannot update a finalized invoice')
   })
+
+  it('should update an invoice line when product is changed', async () => {
+    // given
+    const viewModel = getViewModel(buildInvoiceLines())
+
+    // when
+    await viewModel.fetchInvoice('12345')
+    viewModel.setInvoiceLineProductId(1, 202)
+
+    // then
+    const resultingInvoice = viewModel.getInvoice()
+    expect(resultingInvoice?.invoice_lines[0].product_id).toBe(202)
+  })
 })

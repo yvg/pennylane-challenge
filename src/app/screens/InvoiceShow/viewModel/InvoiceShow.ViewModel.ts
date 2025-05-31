@@ -18,6 +18,7 @@ interface IInvoiceShowViewModel {
   updateInvoice(): Promise<void>
   deleteInvoiceLine(lineId: number): Promise<void>
   setInvoiceLineQuantity(lineId: number, quantity: number): Promise<void>
+  setInvoiceLineProductId(lineId: number, productId: number): Promise<void>
 }
 
 // TODO: Why is the compiler not complaining about missing interface fields?
@@ -169,6 +170,36 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
         })
     } else {
       throw new Error('No invoice to delete')
+    }
+  }
+
+  async setInvoiceLineProductId(
+    lineId: number,
+    productId: number
+  ): Promise<void> {
+    const invoice = this.getInvoice()
+    // TODO: check customer_id typing
+    if (invoice && invoice.customer_id) {
+      const updatedLines = invoice.invoice_lines.map((line) =>
+        line.id === lineId ? { ...line, product_id: productId } : line
+      )
+      this.setInvoice({ ...invoice, invoice_lines: updatedLines })
+      const updatedInvoiceFromNetwork =
+        await this.invoiceRepository.updateInvoice(invoice.id.toString(), {
+          id: invoice.id,
+          customer_id: invoice.customer_id,
+          finalized: invoice.finalized,
+          paid: invoice.paid,
+          date: invoice.date,
+          deadline: invoice.deadline,
+          invoice_lines_attributes: updatedLines.map((line) => ({
+            id: line.id,
+            _destroy: false,
+            product_id: line.product_id,
+            quantity: line.quantity,
+          })),
+        })
+      this.setInvoice(updatedInvoiceFromNetwork)
     }
   }
 }
