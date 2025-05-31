@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 
 import { CustomerInformation } from 'app/screens/InvoiceShow/components/CustomerInformation/CustomerInformation'
@@ -15,12 +15,20 @@ import './InvoiceShow.css'
 export const InvoiceShow = () => {
   const invoiceViewModel = getInvoiceShowViewModel()
   const { id } = useParams<{ id: string }>()
+  const [isLoading, setIsLoading] = useState<boolean>(true)
 
   useEffect(() => {
     if (id) {
-      invoiceViewModel.fetchInvoice(id)
+      invoiceViewModel.fetchInvoice(id).then(() => {
+        setIsLoading(false)
+      })
+
     }
   }, [id, invoiceViewModel])
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
 
   return (
     <ViewModelContextProvider viewModelFactory={() => invoiceViewModel}>
