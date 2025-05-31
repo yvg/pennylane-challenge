@@ -1,6 +1,7 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { useViewModel } from '../../viewModel/InvoiceShow.ViewModelProvider'
 import { Product, Invoice } from 'types'
+import { set } from 'lodash'
 
 type InvoiceLines = Invoice['invoice_lines']
 
@@ -9,20 +10,52 @@ type UseInvoicelinesBehaviourReturnType = {
     invoiceLines: InvoiceLines
     displayInvoiceLines: boolean
     disabled: boolean
+    newLine: {
+      unit: string
+      quantity: string | null
+      purchasePrice: string
+      vatRate: string
+      unitPrice: string
+      amount: string
+    }
+    productToAdd: Product | null
   }
   handlers: {
     onClickDeleteButton: (invoiceLineId: number) => void
     onChangeQuantity: (invoiceLineId: number, quantity: string) => void
-    onChangeProduct: (invoiceLineIneId: number, product: number) => void
+    onChangeProduct: (invoiceLineIneId: number, productId: number) => void
+    onChangeAddProduct: (product: Product | null) => void
+    onClickAddNewLine: () => void
+    onClickCancelNewLine: () => void
   }
 }
 
 export const useInvoicelinesBehaviour =
   (): UseInvoicelinesBehaviourReturnType => {
+    const defaultNewLine = {
+      product: '',
+      quantity: null,
+      unit: '',
+      purchasePrice: '',
+      vatRate: '',
+      unitPrice: '',
+      amount: '',
+    }
     const [invoiceLines, setInvoiceLines] = useState<InvoiceLines>([])
     const [displayInvoiceLines, setDisplayInvoiceLines] =
       useState<boolean>(false)
     const [disabled, setDisabled] = useState<boolean>(false)
+    const [newLine, setNewLine] = useState<{
+      product: string
+      quantity: string | null
+      unit: string
+      purchasePrice: string
+      vatRate: string
+      unitPrice: string
+      amount: string
+    }>(defaultNewLine)
+    const [productToAdd, setProductToAdd] = useState<Product | null>(null)
+
     const viewModel = useViewModel()
 
     const invoice = useSyncExternalStore(
@@ -32,6 +65,7 @@ export const useInvoicelinesBehaviour =
 
     useEffect(() => {
       if (invoice) {
+        console.log(invoice)
         setInvoiceLines(invoice.invoice_lines)
         setDisplayInvoiceLines(invoice.invoice_lines.length > 0)
         setDisabled(invoice.finalized)
@@ -52,16 +86,55 @@ export const useInvoicelinesBehaviour =
       viewModel.setInvoiceLineProductId(invoiceLineId, productId)
     }
 
+    const onChangeAddProduct = (product: Product | null) => {
+      if (product) {
+        setProductToAdd(product)
+        setNewLine({
+          product: product.label,
+          quantity: '1',
+          unit: product.unit,
+          purchasePrice: product.unit_price_without_tax,
+          vatRate: product.vat_rate + '%',
+          unitPrice: product.unit_price,
+          amount: product.unit_price,
+        })
+      }
+    }
+
+    const onClickAddNewLine = () => {
+      if (productToAdd && newLine.quantity) {
+        viewModel.createInvoiceLine(
+          productToAdd.id,
+          parseInt(newLine.quantity, 10)
+        )
+        resetNewLine()
+      }
+    }
+
+    const onClickCancelNewLine = () => {
+      resetNewLine()
+    }
+
+    const resetNewLine = () => {
+      setProductToAdd(null)
+      setNewLine(defaultNewLine)
+    }
+
     return {
       states: {
         invoiceLines,
         displayInvoiceLines,
         disabled,
+        newLine,
+        productToAdd,
       },
       handlers: {
         onChangeProduct,
         onClickDeleteButton,
         onChangeQuantity,
+        onChangeAddProduct,
+        onClickAddNewLine,
+        onClickCancelNewLine,
       },
     }
   }

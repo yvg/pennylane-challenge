@@ -5,8 +5,10 @@ import './InvoiceLines.css'
 
 export const Invoicelines = () => {
   const {
-    states: { invoiceLines, displayInvoiceLines, disabled },
-    handlers: { onClickDeleteButton, onChangeQuantity, onChangeProduct },
+    states: { invoiceLines, displayInvoiceLines, disabled, newLine, productToAdd },
+    handlers: { onClickDeleteButton, onChangeQuantity, onChangeProduct, onChangeAddProduct,
+      onClickAddNewLine, onClickCancelNewLine
+     },
   } = useInvoicelinesBehaviour()
   return (
     <div>
@@ -39,9 +41,23 @@ export const Invoicelines = () => {
             </tr>
           ))}
           </tbody>
+          <tfoot>
+          <tr>
+            <td><ProductAutocomplete disabled={disabled} onChange={onChangeAddProduct} value={productToAdd} /></td>
+            <td>{newLine.quantity && <input placeholder="0" disabled={disabled} defaultValue={newLine.quantity} size={3} type="number" pattern="\d+" />}</td>
+            <td>{newLine.unit}</td>
+            <td>{newLine.purchasePrice}</td>
+            <td>{newLine.vatRate}</td>
+            <td>{newLine.unitPrice}</td>
+            <td>{newLine.amount}</td>
+            <td>
+              <button disabled={disabled || !newLine.quantity} onClick={onClickAddNewLine}>Add line</button>&nbsp;
+              {newLine.quantity && <button onClick={onClickCancelNewLine}>Cancel</button>}
+            </td>
+          </tr>
+          </tfoot>
         </table>
       }
-      <button disabled={disabled} onClick={() => console.log('Add item')}>Add item</button>
     </div>
   )
 }

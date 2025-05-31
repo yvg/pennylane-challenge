@@ -9,10 +9,10 @@ type UpdateInvoiceData = {
   date: string | null
   deadline: string | null
   invoice_lines_attributes: {
-    id: number
-    _destroy: boolean
-    product_id: number
-    quantity: number
+    id?: number
+    _destroy?: boolean
+    product_id?: number
+    quantity?: number
   }[]
 }
 
