@@ -5,6 +5,9 @@ import { useInvoicesListBehaviour } from './InvoicesList.behaviour'
 import { useApi } from 'api'
 
 jest.mock('api')
+jest.mock('react-router-dom', () => ({
+  useNavigate: jest.fn(),
+}))
 
 const mockedUsedApi = useApi as jest.Mock
 
@@ -54,6 +57,7 @@ describe('useInvoicesListBehaviour', () => {
 
   it('should refetch and re-render on successful invoice deletion', async () => {
     // Given
+    jest.spyOn(window, 'confirm').mockImplementationOnce(() => true)
     const getMockedDeleteInvoice = jest
       .fn()
       .mockResolvedValue(getMockedDeleteInvoiceResponse())
@@ -91,6 +95,7 @@ describe('useInvoicesListBehaviour', () => {
 
   it('should fail gracefully on unsuccesful invoice deletion', async () => {
     // Given
+    jest.spyOn(window, 'confirm').mockImplementationOnce(() => true)
     const getMockedDeleteInvoice = jest.fn().mockRejectedValue({})
 
     mockedUsedApi

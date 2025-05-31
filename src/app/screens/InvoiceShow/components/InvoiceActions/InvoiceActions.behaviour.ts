@@ -56,7 +56,13 @@ export const useInvoiceActionsBehaviour =
       }
     }
     const onClickFinalize = () => {
-      viewModel.setFinalized()
+      if (
+        window.confirm(
+          "Are you sure you want to mark this invoice as final? This action can't be undone."
+        )
+      ) {
+        viewModel.setFinalized()
+      }
     }
 
     return {
