@@ -40,14 +40,20 @@ export const useInvoiceActionsBehaviour =
       viewModel.setPaid(!invoice?.paid)
     }
     const onClickDelete = () => {
-      viewModel
-        .deleteInvoice()
-        .then(() => {
-          navigate('/')
-        })
-        .catch(() => {
-          alert('Something went wrong while deleting the invoice')
-        })
+      if (
+        window.confirm(
+          "Are you sure you want to delete this invoice? This action can't be undone."
+        )
+      ) {
+        viewModel
+          .deleteInvoice()
+          .then(() => {
+            navigate('/')
+          })
+          .catch(() => {
+            alert('Something went wrong while deleting the invoice')
+          })
+      }
     }
     const onClickFinalize = () => {
       viewModel.setFinalized()

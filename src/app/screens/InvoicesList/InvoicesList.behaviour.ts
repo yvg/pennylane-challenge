@@ -47,8 +47,13 @@ export const useInvoicesListBehaviour =
 
     const onClickDelete = useCallback(
       (id: number) => (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault()
-        deleteInvoice(id)
+        if (
+          window.confirm(
+            "Are you sure you want to delete this invoice? This action can't be undone."
+          )
+        ) {
+          deleteInvoice(id)
+        }
       },
       [deleteInvoice]
     )
