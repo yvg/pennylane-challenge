@@ -12,8 +12,8 @@ export const Invoicelines = () => {
   } = useInvoicelinesBehaviour()
   return (
     <div>
-      {displayInvoiceLines &&
-        // Not convinced this is tabular data… but for simplicity I'll use table as it has been used in the list.
+
+        {/* Not convinced this is tabular data… but for simplicity I'll use table as it has been used in the list. */}
         <table className="table table-bordered table-striped">
           <thead>
           <tr>
@@ -27,6 +27,7 @@ export const Invoicelines = () => {
             <th></th>
           </tr>
           </thead>
+          {displayInvoiceLines &&
           <tbody>
           {invoiceLines.map((line) => (
             <tr key={line.id}>
@@ -41,6 +42,7 @@ export const Invoicelines = () => {
             </tr>
           ))}
           </tbody>
+}
           <tfoot>
           <tr>
             <td><ProductAutocomplete disabled={disabled} onChange={onChangeAddProduct} value={productToAdd} /></td>
@@ -57,7 +59,6 @@ export const Invoicelines = () => {
           </tr>
           </tfoot>
         </table>
-      }
     </div>
   )
 }

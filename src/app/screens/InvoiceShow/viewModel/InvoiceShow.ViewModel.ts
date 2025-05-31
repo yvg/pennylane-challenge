@@ -132,30 +132,9 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
     lineId: number,
     quantity: number
   ): Promise<void> {
-    const invoice = this.getInvoice()
-    // TODO: check customer_id typing
-    if (invoice && invoice.customer_id) {
-      const updatedLines = invoice.invoice_lines.map((line) =>
-        line.id === lineId ? { ...line, quantity } : line
-      )
-      this.setInvoice({ ...invoice, invoice_lines: updatedLines })
-      const updatedInvoiceFromNetwork =
-        await this.invoiceRepository.updateInvoice(invoice.id.toString(), {
-          id: invoice.id,
-          customer_id: invoice.customer_id,
-          finalized: invoice.finalized,
-          paid: invoice.paid,
-          date: invoice.date,
-          deadline: invoice.deadline,
-          invoice_lines_attributes: updatedLines.map((line) => ({
-            id: line.id,
-            _destroy: false, // Not deleting, just updating
-            product_id: line.product_id,
-            quantity: line.quantity,
-          })),
-        })
-      this.setInvoice(updatedInvoiceFromNetwork)
-    }
+    this.updateInvoiceLineAttributes(this.getInvoice(), lineId, {
+      quantity,
+    })
   }
 
   async deleteInvoice(): Promise<void> {
@@ -178,30 +157,9 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
     lineId: number,
     productId: number
   ): Promise<void> {
-    const invoice = this.getInvoice()
-    // TODO: check customer_id typing
-    if (invoice && invoice.customer_id) {
-      const updatedLines = invoice.invoice_lines.map((line) =>
-        line.id === lineId ? { ...line, product_id: productId } : line
-      )
-      this.setInvoice({ ...invoice, invoice_lines: updatedLines })
-      const updatedInvoiceFromNetwork =
-        await this.invoiceRepository.updateInvoice(invoice.id.toString(), {
-          id: invoice.id,
-          customer_id: invoice.customer_id,
-          finalized: invoice.finalized,
-          paid: invoice.paid,
-          date: invoice.date,
-          deadline: invoice.deadline,
-          invoice_lines_attributes: updatedLines.map((line) => ({
-            id: line.id,
-            _destroy: false,
-            product_id: line.product_id,
-            quantity: line.quantity,
-          })),
-        })
-      this.setInvoice(updatedInvoiceFromNetwork)
-    }
+    this.updateInvoiceLineAttributes(this.getInvoice(), lineId, {
+      product_id: productId,
+    })
   }
 
   public createInvoiceLine(productId: number, quantity: number): void {
@@ -231,6 +189,31 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
         })
         .then((updatedInvoice) => {
           this.setInvoice(updatedInvoice)
+        })
+    }
+  }
+
+  private updateInvoiceLineAttributes(
+    invoice: Invoice,
+    lineId: number,
+    attributes: Partial<{ product_id: number; quantity: number }>
+  ): void {
+    if (invoice && invoice.customer_id) {
+      const updatedLines = invoice.invoice_lines.map((line) =>
+        line.id === lineId
+          ? { ...line, ...attributes, _destroy: false }
+          : { ...line, _destroy: false }
+      )
+
+      this.invoiceRepository
+        .updateInvoice(invoice.id.toString(), {
+          ...invoice,
+          customer_id: invoice.customer_id,
+          invoice_lines_attributes: updatedLines,
+        })
+        .then((updatedInvoice) => this.setInvoice(updatedInvoice))
+        .catch(() => {
+          throw new Error('Failed to update invoice line attributes')
         })
     }
   }

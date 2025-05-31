@@ -263,16 +263,87 @@ describe('InvoiceShowViewModel', () => {
     }).toThrow('Cannot update a finalized invoice')
   })
 
-  it('should update an invoice line when product is changed', async () => {
+  it('should update product ID in invoice line', async () => {
     // given
-    const viewModel = getViewModel(buildInvoiceLines())
+    const viewModel = new InvoiceShowViewModel(
+      getMockedInvoiceRepositoryToOverrideMethods({
+        updateInvoice: jest.fn().mockResolvedValue(
+          getMockedInvoiceRepositoryResponse({
+            invoice_lines: [
+              {
+                id: 1,
+                invoice_id: 12345,
+                product_id: 202,
+                quantity: 2,
+                label: 'Product A',
+                unit: 'piece' as Unit,
+                price: '10.00',
+                vat_rate: '20' as VatRate,
+                tax: '20',
+                product: {
+                  id: 67,
+                  label: 'Tesla Model S',
+                  vat_rate: '20' as VatRate,
+                  unit: 'piece' as Unit,
+                  unit_price: '1980',
+                  unit_price_without_tax: '1800',
+                  unit_tax: '180',
+                },
+              },
+            ],
+          })
+        ),
+      })
+    )
 
     // when
     await viewModel.fetchInvoice('12345')
-    viewModel.setInvoiceLineProductId(1, 202)
+    await viewModel.setInvoiceLineProductId(1, 202)
 
     // then
     const resultingInvoice = viewModel.getInvoice()
     expect(resultingInvoice?.invoice_lines[0].product_id).toBe(202)
+  })
+
+  it('should update quantity in invoice line', async () => {
+    // given
+    const viewModel = new InvoiceShowViewModel(
+      getMockedInvoiceRepositoryToOverrideMethods({
+        updateInvoice: jest.fn().mockResolvedValue(
+          getMockedInvoiceRepositoryResponse({
+            invoice_lines: [
+              {
+                id: 1,
+                invoice_id: 12345,
+                product_id: 202,
+                quantity: 1000,
+                label: 'Product A',
+                unit: 'piece' as Unit,
+                price: '10.00',
+                vat_rate: '20' as VatRate,
+                tax: '20',
+                product: {
+                  id: 67,
+                  label: 'Tesla Model S',
+                  vat_rate: '20' as VatRate,
+                  unit: 'piece' as Unit,
+                  unit_price: '1980',
+                  unit_price_without_tax: '1800',
+                  unit_tax: '180',
+                },
+              },
+            ],
+          })
+        ),
+      })
+    )
+
+    // when
+    await viewModel.fetchInvoice('12345')
+    await viewModel.setInvoiceLineQuantity(1, 1000)
+
+    // then
+    const resultingInvoice = viewModel.getInvoice()
+    expect(resultingInvoice?.invoice_lines[0].quantity).toBe(1000)
   })
 })
