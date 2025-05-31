@@ -15,27 +15,45 @@ interface IInvoiceShowViewModel {
   setDate(date: string | null): void
   setDeadline(deadline: string | null): void
   setPaid(paid: boolean): void
-  updateInvoice(): Promise<void>
-  deleteInvoiceLine(lineId: number): Promise<void>
-  setInvoiceLineQuantity(lineId: number, quantity: number): Promise<void>
-  setInvoiceLineProductId(lineId: number, productId: number): Promise<void>
+  setFinalized(): void
+  deleteInvoice(): Promise<void>
+  deleteInvoiceLine(lineId: number): void
+  setInvoiceLineQuantity(lineId: number, quantity: number): void
+  setInvoiceLineProductId(lineId: number, productId: number): void
   createInvoiceLine(productId: number, quantity: number): void
 }
 
-// TODO: Why is the compiler not complaining about missing interface fields?
 export class InvoiceShowViewModel implements IInvoiceShowViewModel {
   private invoice = new BehaviorSubject<Invoice | null>(null)
 
   constructor(private invoiceRepository: InvoiceRepository) {}
 
-  private updateInvoicePartially(updateField: Partial<Invoice>): void {
-    const invoice = this.getInvoice()
-    if (invoice) {
-      this.setInvoice({
+  private updateInvoiceLineAttributes(
+    invoice: Invoice,
+    lineId: number,
+    attributes: Partial<{ product_id: number; quantity: number }>
+  ): void {
+    if (invoice && invoice.customer_id) {
+      const updatedLines = invoice.invoice_lines.map((line) =>
+        line.id === lineId
+          ? { ...line, ...attributes, _destroy: false }
+          : { ...line, _destroy: false }
+      )
+
+      const updatedInvoice = {
         ...invoice,
-        ...updateField,
-      })
-      this.updateInvoice()
+        customer_id: invoice.customer_id,
+        invoice_lines_attributes: updatedLines,
+      }
+
+      this.invoiceRepository
+        .updateInvoice(invoice.id.toString(), updatedInvoice)
+        .then((updatedInvoiceFromNetwork) =>
+          this.setInvoice(updatedInvoiceFromNetwork)
+        )
+        .catch(() => {
+          throw new Error('Failed to update invoice line attributes')
+        })
     }
   }
 
@@ -59,13 +77,21 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
     this.setInvoice(invoice)
   }
 
-  async updateInvoice() {
+  private updateInvoice(updateField: Partial<Invoice>): void {
+    const invoice = this.getInvoice()
+    if (!invoice || !invoice.customer_id) {
+      throw new Error('No invoice to update')
+    }
+    this.setInvoice({
+      ...invoice,
+      ...updateField,
+    })
     const updatedInvoice = this.getInvoice()
     if (!updatedInvoice || !updatedInvoice.customer_id) {
       throw new Error('No invoice to update')
     }
-    const updatedInvoiceFromNetwork =
-      await this.invoiceRepository.updateInvoice(updatedInvoice.id.toString(), {
+    this.invoiceRepository
+      .updateInvoice(updatedInvoice.id.toString(), {
         id: updatedInvoice.id,
         customer_id: updatedInvoice.customer_id,
         finalized: updatedInvoice.finalized,
@@ -75,30 +101,35 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
         // TODO: Handle invoice lines here?
         invoice_lines_attributes: [],
       })
-    this.setInvoice(updatedInvoiceFromNetwork)
+      .then((updatedInvoiceFromNetwork) => {
+        this.setInvoice(updatedInvoiceFromNetwork)
+      })
+      .catch(() => {
+        throw new Error('Failed to update invoice')
+      })
   }
 
   public setCustomerId(customerId: number): void {
-    this.updateInvoicePartially({ customer_id: customerId })
+    this.updateInvoice({ customer_id: customerId })
   }
 
   public setDate(date: string | null): void {
-    this.updateInvoicePartially({ date })
+    this.updateInvoice({ date })
   }
 
   public setDeadline(deadline: string | null): void {
-    this.updateInvoicePartially({ deadline })
+    this.updateInvoice({ deadline })
   }
 
   public setPaid(paid: boolean): void {
-    this.updateInvoicePartially({ paid })
+    this.updateInvoice({ paid })
   }
 
   public setFinalized(): void {
-    this.updateInvoicePartially({ finalized: true })
+    this.updateInvoice({ finalized: true })
   }
 
-  async deleteInvoiceLine(lineId: number): Promise<void> {
+  public deleteInvoiceLine(lineId: number): void {
     const invoice = this.getInvoice()
     // Ideally this should be part of a service pattern, but for simplicity of the exercice, let's handle it here.
     // TODO: check customer_id typing
@@ -109,8 +140,8 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
           (line) => line.id !== lineId
         ),
       })
-      const updatedInvoiceFromNetwork =
-        await this.invoiceRepository.updateInvoice(invoice.id.toString(), {
+      this.invoiceRepository
+        .updateInvoice(invoice.id.toString(), {
           id: invoice.id,
           customer_id: invoice.customer_id,
           finalized: invoice.finalized,
@@ -124,14 +155,13 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
             quantity: line.quantity,
           })),
         })
-      this.setInvoice(updatedInvoiceFromNetwork)
+        .then((updatedInvoiceFromNetwork) => {
+          this.setInvoice(updatedInvoiceFromNetwork)
+        })
     }
   }
 
-  async setInvoiceLineQuantity(
-    lineId: number,
-    quantity: number
-  ): Promise<void> {
+  public setInvoiceLineQuantity(lineId: number, quantity: number): void {
     this.updateInvoiceLineAttributes(this.getInvoice(), lineId, {
       quantity,
     })
@@ -140,23 +170,16 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
   async deleteInvoice(): Promise<void> {
     const invoice = this.getInvoice()
     if (invoice) {
-      await this.invoiceRepository
-        .deleteInvoice(invoice.id.toString())
-        .then(() => {
-          this.setInvoice(null)
-        })
-        .catch(() => {
-          throw new Error(`Failed to delete invoice`)
-        })
-    } else {
-      throw new Error('No invoice to delete')
+      const deleted = await this.invoiceRepository.deleteInvoice(
+        invoice.id.toString()
+      )
+      if (deleted) {
+        this.setInvoice(null)
+      }
     }
   }
 
-  async setInvoiceLineProductId(
-    lineId: number,
-    productId: number
-  ): Promise<void> {
+  public setInvoiceLineProductId(lineId: number, productId: number): void {
     this.updateInvoiceLineAttributes(this.getInvoice(), lineId, {
       product_id: productId,
     })
@@ -169,51 +192,23 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
         product_id: productId,
         quantity: quantity,
       }
+      const updatedInvoice = {
+        ...invoice,
+        customer_id: invoice.customer_id,
+        invoice_lines_attributes: [
+          ...invoice.invoice_lines.map((line) => ({
+            id: line.id,
+            _destroy: false,
+            product_id: line.product_id,
+            quantity: line.quantity,
+          })),
+          newLine,
+        ],
+      }
       this.invoiceRepository
-        .updateInvoice(invoice.id.toString(), {
-          id: invoice.id,
-          customer_id: invoice.customer_id,
-          finalized: invoice.finalized,
-          paid: invoice.paid,
-          date: invoice.date,
-          deadline: invoice.deadline,
-          invoice_lines_attributes: [
-            ...invoice.invoice_lines.map((line) => ({
-              id: line.id,
-              _destroy: false,
-              product_id: line.product_id,
-              quantity: line.quantity,
-            })),
-            newLine,
-          ],
-        })
-        .then((updatedInvoice) => {
-          this.setInvoice(updatedInvoice)
-        })
-    }
-  }
-
-  private updateInvoiceLineAttributes(
-    invoice: Invoice,
-    lineId: number,
-    attributes: Partial<{ product_id: number; quantity: number }>
-  ): void {
-    if (invoice && invoice.customer_id) {
-      const updatedLines = invoice.invoice_lines.map((line) =>
-        line.id === lineId
-          ? { ...line, ...attributes, _destroy: false }
-          : { ...line, _destroy: false }
-      )
-
-      this.invoiceRepository
-        .updateInvoice(invoice.id.toString(), {
-          ...invoice,
-          customer_id: invoice.customer_id,
-          invoice_lines_attributes: updatedLines,
-        })
-        .then((updatedInvoice) => this.setInvoice(updatedInvoice))
-        .catch(() => {
-          throw new Error('Failed to update invoice line attributes')
+        .updateInvoice(invoice.id.toString(), updatedInvoice)
+        .then((updatedInvoiceFromNetwork) => {
+          this.setInvoice(updatedInvoiceFromNetwork)
         })
     }
   }

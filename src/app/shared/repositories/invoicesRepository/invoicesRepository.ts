@@ -18,7 +18,7 @@ type UpdateInvoiceData = {
 
 export type InvoiceRepository = {
   getInvoice(id: string): Promise<Invoice>
-  updateInvoice(id: string, data: UpdateInvoiceData): Promise<Invoice>
+  updateInvoice(id: string, data: Partial<UpdateInvoiceData>): Promise<Invoice>
   deleteInvoice(id: string): Promise<true>
 }
 
@@ -34,7 +34,11 @@ export class InvoiceRepositoryImpl implements InvoiceRepository {
     return response.data
   }
 
-  async updateInvoice(id: string, data: UpdateInvoiceData): Promise<Invoice> {
+  async updateInvoice(
+    id: string,
+    data: Partial<UpdateInvoiceData>
+  ): Promise<Invoice> {
+    // @ts-ignore
     const response = await this.apiClient.putInvoice(id, { invoice: data })
     if (response.status !== 200) {
       throw new Error(`Failed to update invoice with ID ${id}`)
