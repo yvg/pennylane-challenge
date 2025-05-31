@@ -1,6 +1,4 @@
-import { getAxiosClient } from 'api'
 import { Client } from 'api/gen/client'
-import { config } from 'app/config'
 import { Invoice } from 'types'
 
 type UpdateInvoiceData = {

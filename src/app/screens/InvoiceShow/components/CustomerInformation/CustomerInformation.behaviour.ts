@@ -1,5 +1,5 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
-import { Invoice } from 'types'
+import { Customer, Invoice } from 'types'
 import { useViewModel } from '../../viewModel/InvoiceShow.ViewModelProvider'
 
 type UseCustomerInformationBehaviourReturnType = {
@@ -8,7 +8,7 @@ type UseCustomerInformationBehaviourReturnType = {
     disabled: boolean
   }
   handlers: {
-    onClickEditCustomer: () => void
+    onChangeCustomer: (customer: Customer | null) => void
   }
 }
 
@@ -32,11 +32,10 @@ export const useCustomerInformationBehaviour =
       }
     }, [invoice])
 
-    const onClickEditCustomer = () => {
-      if (invoice?.customer_id === 84) {
-        viewModel.setCustomerId(143)
-      } else {
-        viewModel.setCustomerId(84)
+    const onChangeCustomer = (customer: Customer | null) => {
+      if (customer) {
+        const customerId = customer.id
+        viewModel.setCustomerId(customerId)
       }
     }
 
@@ -46,7 +45,7 @@ export const useCustomerInformationBehaviour =
         disabled,
       },
       handlers: {
-        onClickEditCustomer,
+        onChangeCustomer,
       },
     }
   }

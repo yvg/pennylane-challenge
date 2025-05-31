@@ -1,6 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { useViewModel } from '../../viewModel/InvoiceShow.ViewModelProvider'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 type UseInvoiceActionsBehaviourReturnType = {
   states: {

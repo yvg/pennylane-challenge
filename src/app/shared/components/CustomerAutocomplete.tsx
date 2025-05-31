@@ -8,6 +8,7 @@ import { GroupBase } from 'react-select'
 interface Props {
   value: Customer | null
   onChange: (Customer: Customer | null) => void
+  disabled?: boolean
 }
 
 const defaultAdditional = { page: 1 }
@@ -16,7 +17,7 @@ const getCustomerLabel = (customer: Customer) => {
   return `${customer.first_name} ${customer.last_name}`
 }
 
-const CustomerAutocomplete = ({ value, onChange }: Props) => {
+const CustomerAutocomplete = ({ value, onChange, disabled }: Props) => {
   const api = useApi()
 
   const loadOptions: LoadOptions<Customer, GroupBase<Customer>, {page: number}> = useCallback(
@@ -47,6 +48,7 @@ const CustomerAutocomplete = ({ value, onChange }: Props) => {
       value={value}
       onChange={onChange}
       loadOptions={loadOptions}
+      isDisabled={disabled}
     />
   )
 }
