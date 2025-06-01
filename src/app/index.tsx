@@ -7,8 +7,6 @@ import { config } from './config'
 
 import 'bootstrap/dist/css/bootstrap.min.css'
 
-const token = config.apiToken
-
 const domRoot = document.getElementById('root');
 const root = createRoot(domRoot!);
 

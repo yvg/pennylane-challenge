@@ -4,7 +4,7 @@ import { useViewModel } from '../../viewModel/InvoiceShow.ViewModelProvider'
 
 type UseCustomerInformationBehaviourReturnType = {
   states: {
-    customer?: Invoice['customer']
+    customer: Invoice['customer'] | null
     disabled: boolean
   }
   handlers: {
@@ -14,10 +14,8 @@ type UseCustomerInformationBehaviourReturnType = {
 
 export const useCustomerInformationBehaviour =
   (): UseCustomerInformationBehaviourReturnType => {
-    // TODO: properly type the state
-    const [customer, setCustomer] = useState<Invoice['customer']>()
+    const [customer, setCustomer] = useState<Invoice['customer'] | null>(null)
     const [disabled, setDisabled] = useState(false)
-
     const viewModel = useViewModel()
 
     const invoice = useSyncExternalStore(
