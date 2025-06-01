@@ -5,3 +5,7 @@ table {
 input:invalid {
   background-color: #f8d7da;
 }
+
+.total-label {
+  text-align: right
+}

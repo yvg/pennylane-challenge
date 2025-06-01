@@ -2,7 +2,6 @@ import { useEffect, useState, useSyncExternalStore } from 'react'
 import { useViewModel } from '../../viewModel/InvoiceShow.ViewModelProvider'
 
 type Status = {
-  finalized: boolean
   paid: boolean
   date: string | null
   deadline: string | null
@@ -35,7 +34,6 @@ export const useStatusInformationBehaviour =
     useEffect(() => {
       if (invoice) {
         setStatus({
-          finalized: invoice.finalized,
           paid: invoice.paid,
           date: invoice.date,
           deadline: invoice.deadline,

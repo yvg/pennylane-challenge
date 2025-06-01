@@ -18,6 +18,7 @@ type UseInvoicelinesBehaviourReturnType = {
       amount: string
     }
     productToAdd: Product | null
+    totalAmount: string
   }
   handlers: {
     onClickDeleteButton: (invoiceLineId: number) => void
@@ -54,6 +55,7 @@ export const useInvoicelinesBehaviour =
       amount: string
     }>(defaultNewLine)
     const [productToAdd, setProductToAdd] = useState<Product | null>(null)
+    const [totalAmount, setTotalAmount] = useState<string>('0.00')
 
     const viewModel = useViewModel()
 
@@ -68,6 +70,7 @@ export const useInvoicelinesBehaviour =
         setInvoiceLines(invoice.invoice_lines)
         setDisplayInvoiceLines(invoice.invoice_lines.length > 0)
         setDisabled(invoice.finalized)
+        setTotalAmount(invoice.total ?? '0.00')
       }
     }, [invoice])
 
@@ -126,6 +129,7 @@ export const useInvoicelinesBehaviour =
         disabled,
         newLine,
         productToAdd,
+        totalAmount,
       },
       handlers: {
         onChangeProduct,

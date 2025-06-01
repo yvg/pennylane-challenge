@@ -1,6 +1,17 @@
-.invoice-header {
-  display: flex;
-  justify-content: space-between;
+.invoice-header-actions {
+  text-align: right;
+}
+
+.invoice-header-information {
   padding: 10px;
   background-color: #f8f9fa;
+  border-radius: 8px;
+  margin: 10px 0;
+  display: flex;
+  gap: 40px;
+
+  > :last-child {
+    border-left: 1px solid #000000;
+    padding: 0 0 0 20px;
+  }
 }

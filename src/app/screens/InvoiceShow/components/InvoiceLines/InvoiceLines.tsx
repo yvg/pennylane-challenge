@@ -5,7 +5,7 @@ import './InvoiceLines.css'
 
 export const Invoicelines = () => {
   const {
-    states: { invoiceLines, displayInvoiceLines, disabled, newLine, productToAdd },
+    states: { invoiceLines, displayInvoiceLines, disabled, newLine, productToAdd, totalAmount },
     handlers: { onClickDeleteButton, onChangeQuantity, onChangeProduct, onChangeAddProduct,
       onClickAddNewLine, onClickCancelNewLine
      },
@@ -56,6 +56,11 @@ export const Invoicelines = () => {
               <button disabled={disabled || !newLine.quantity} onClick={onClickAddNewLine}>Add line</button>&nbsp;
               {newLine.quantity && <button onClick={onClickCancelNewLine}>Cancel</button>}
             </td>
+          </tr>
+          <tr>
+            <td colSpan={6} className="total-label">Total:</td>
+            <td><strong>{totalAmount}</strong></td>
+            <td></td>
           </tr>
           </tfoot>
         </table>

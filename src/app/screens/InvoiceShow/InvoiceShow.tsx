@@ -33,11 +33,19 @@ export const InvoiceShow = () => {
   return (
     <ViewModelContextProvider viewModelFactory={() => invoiceViewModel}>
       <div>
-        <div className="invoice-header">
-          <CustomerInformation />
-          <InvoiceActions />
-        </div>
-        <StatusInformation />
+        <header className="invoice-header">
+          <div className="invoice-header-actions">
+            <InvoiceActions />
+          </div>
+          <div className="invoice-header-information">
+            <div>
+              <StatusInformation />
+            </div>
+            <div>
+              <CustomerInformation />
+            </div>
+          </div>
+        </header>
         <Invoicelines />
       </div>
     </ViewModelContextProvider>
