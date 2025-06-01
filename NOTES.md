@@ -2,6 +2,8 @@ Hey there Pennylane-team!
 
 Thanks for taking your time to review this codebase.
 
+[See the application live](https://pennylane-challenge.vercel.app/)
+
 I'm not sure we will be chatting together so I wanted to clarify my thought process:
 
 ## Product aspects
@@ -31,6 +33,8 @@ In addition to these choices I have also made the choice to follow a modular arc
 For the pieces like InvoiceList, ProductAutocomplete and CustomerAutocomplete, I have extended them as needed but did not change their inner workings, I hope this gives you an indication that I can work with most React apps, I am a pragmatic person :)
 
 I have also limited testing to a few components, a few behaviours, the ViewModel and the repositories. I did not seek 100%-coverage, I simply wanted to demonstrate my understanding of testing.
+
+Finally, I used env vars to inject the provided API token instead of hardcoding it in the source.
 
 The architectural choices are a bit atypical for React apps, however I believe it provides the robustness and flexibility I was seeking, while leaving the reactive UI aspects to React.
 
