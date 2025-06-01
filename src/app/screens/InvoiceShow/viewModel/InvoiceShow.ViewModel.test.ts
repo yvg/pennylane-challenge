@@ -2,24 +2,6 @@ import type { InvoiceRepository } from 'app/shared/repositories/invoicesReposito
 import { InvoiceShowViewModel } from './InvoiceShow.ViewModel'
 
 type Invoice = Awaited<ReturnType<InvoiceRepository['getInvoice']>> | null
-type Unit = 'hour' | 'day' | 'piece'
-type VatRate = '0' | '5.5' | '10' | '20'
-
-const getMockedInvoiceRepositoryResponse = (
-  overrides?: Partial<Invoice>
-): Invoice => ({
-  id: 12345,
-  customer_id: 1,
-  finalized: false,
-  paid: true,
-  date: null,
-  deadline: null,
-  total: '0',
-  tax: '20',
-  invoice_lines: [],
-  ...overrides,
-})
-
 const buildInvoiceRepositoryResponse = (
   overrides?: Partial<Invoice>
 ): Invoice => ({
@@ -38,15 +20,15 @@ const buildInvoiceRepositoryResponse = (
       product_id: 101,
       quantity: 2,
       label: 'Product A',
-      unit: 'piece' as Unit,
+      unit: 'piece',
       price: '10.00',
-      vat_rate: '20' as VatRate,
+      vat_rate: '20',
       tax: '20.00',
       product: {
         id: 67,
         label: 'Tesla Model S',
-        vat_rate: '20' as VatRate,
-        unit: 'piece' as Unit,
+        vat_rate: '20',
+        unit: 'piece',
         unit_price: '1980',
         unit_price_without_tax: '1800',
         unit_tax: '180',
@@ -66,79 +48,10 @@ const getMockedInvoiceRepositoryToOverrideMethods = ({
   deleteInvoice?: InvoiceRepository['deleteInvoice']
 }): InvoiceRepository => ({
   getInvoice:
-    getInvoice ??
-    jest.fn().mockResolvedValue(getMockedInvoiceRepositoryResponse()),
+    getInvoice ?? jest.fn().mockResolvedValue(buildInvoiceRepositoryResponse()),
   // TODO: This only works because methods relying on it are not async, but it should be mocked.
   updateInvoice: updateInvoice ?? jest.fn(),
   deleteInvoice: deleteInvoice ?? jest.fn(),
-})
-
-const getMockedInvoiceRepository = (
-  getInvoiceResponseOverrides?: Partial<Invoice>
-): InvoiceRepository => ({
-  getInvoice: jest
-    .fn()
-    .mockResolvedValue(
-      getMockedInvoiceRepositoryResponse(getInvoiceResponseOverrides)
-    ),
-  // TODO: This only works because methods relying on it are not async, but it should be mocked.
-  updateInvoice: jest.fn(),
-  deleteInvoice: jest.fn(),
-})
-
-const getViewModel = (
-  getInvoiceResponseOverrides?: Partial<Invoice>
-): InvoiceShowViewModel => {
-  return new InvoiceShowViewModel(
-    getMockedInvoiceRepository(getInvoiceResponseOverrides)
-  )
-}
-
-const buildInvoiceLines = () => ({
-  invoice_lines: [
-    {
-      id: 1,
-      invoice_id: 12345,
-      product_id: 101,
-      quantity: 2,
-      label: 'Product A',
-      unit: 'piece' as Unit,
-      price: '10.00',
-      vat_rate: '20' as VatRate,
-      tax: '20',
-      product: {
-        id: 67,
-        label: 'Tesla Model S',
-        vat_rate: '20' as VatRate,
-        // TODO: fix hack
-        unit: 'piece' as Unit,
-        unit_price: '1980',
-        unit_price_without_tax: '1800',
-        unit_tax: '180',
-      },
-    },
-    {
-      id: 2,
-      invoice_id: 12345,
-      product_id: 102,
-      quantity: 1,
-      label: 'Product B',
-      unit: 'piece' as Unit,
-      price: '20.00',
-      vat_rate: '20' as VatRate,
-      tax: '20',
-      product: {
-        id: 68,
-        label: 'Tesla Model X',
-        vat_rate: '20' as VatRate,
-        // TODO: fix hack
-        unit: 'piece' as Unit,
-        unit_price: '2500',
-        unit_price_without_tax: '2300',
-        unit_tax: '200',
-      },
-    },
-  ],
 })
 
 const getViewModelWithMockedRepositoryResponses = (
@@ -170,7 +83,7 @@ describe('InvoiceShowViewModel', () => {
 
   it('should populate the invoice when fetching', async () => {
     // given
-    const viewModel = getViewModel()
+    const viewModel = getViewModelWithMockedRepositoryResponses()
 
     // when
     expect(viewModel.getInvoice()).toBeNull()
@@ -314,17 +227,15 @@ describe('InvoiceShowViewModel', () => {
   // TODO
   xit('should throw an error when updating a finalized invoice', async () => {
     // given
-    const viewModel = getViewModel({
-      finalized: true,
-    })
-
-    // when
-    await viewModel.fetchInvoice('12345')
-
-    // then
-    expect(() => {
-      viewModel.setDate('2023-10-01')
-    }).toThrow('Cannot update a finalized invoice')
+    // const viewModel = getViewModel({
+    //   finalized: true,
+    // })
+    // // when
+    // await viewModel.fetchInvoice('12345')
+    // // then
+    // expect(() => {
+    //   viewModel.setDate('2023-10-01')
+    // }).toThrow('Cannot update a finalized invoice')
   })
 
   it('should update product ID in invoice line', async () => {
@@ -339,15 +250,15 @@ describe('InvoiceShowViewModel', () => {
             product_id: 202,
             quantity: 2,
             label: 'Product A',
-            unit: 'piece' as Unit,
+            unit: 'piece',
             price: '10.00',
-            vat_rate: '20' as VatRate,
+            vat_rate: '20',
             tax: '20',
             product: {
               id: 202,
               label: 'Tesla Model S',
-              vat_rate: '20' as VatRate,
-              unit: 'piece' as Unit,
+              vat_rate: '20',
+              unit: 'piece',
               unit_price: '1980',
               unit_price_without_tax: '1800',
               unit_tax: '180',
@@ -378,15 +289,15 @@ describe('InvoiceShowViewModel', () => {
             product_id: 202,
             quantity: 1000,
             label: 'Product A',
-            unit: 'piece' as Unit,
+            unit: 'piece',
             price: '10.00',
-            vat_rate: '20' as VatRate,
+            vat_rate: '20',
             tax: '20',
             product: {
               id: 202,
               label: 'Tesla Model S',
-              vat_rate: '20' as VatRate,
-              unit: 'piece' as Unit,
+              vat_rate: '20',
+              unit: 'piece',
               unit_price: '1980',
               unit_price_without_tax: '1800',
               unit_tax: '180',
