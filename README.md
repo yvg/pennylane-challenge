@@ -1,3 +1,8 @@
+# NOTES
+
+ 👋 Hello pennylane-team, please read through [my notes](./NOTES.md).
+
+----
 # jean_test_front
 
 This repository contains the guidelines for the frontend interview question, as well as a repository skeleton with which to start.
@@ -17,7 +22,7 @@ This prototype allows users to perform simple actions around their invoices:
 - Manage existing invoices
   - Finalize invoices
   - Delete invoices
- 
+
 We do not expect the prototype to be UI-rich as we'll mainly focus on code quality & user experience. We expect you to adopt standard coding practices & setup, including testing, as if you were working on a real application with other coworkers.
 
 Feel free to use pre-installed dependencies or add new ones if you have a legitimate use of them.
