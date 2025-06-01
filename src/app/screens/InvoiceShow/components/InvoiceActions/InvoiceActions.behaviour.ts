@@ -39,6 +39,7 @@ export const useInvoiceActionsBehaviour =
     const onClickMarkAsPaid = () => {
       viewModel.setPaid(!invoice?.paid)
     }
+
     const onClickDelete = () => {
       if (
         window.confirm(

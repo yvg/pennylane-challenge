@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { CustomerInformation } from './CustomerInformation'
-const { useCustomerInformationBehaviour } = require('./CustomerInformation.behaviour')
+import { useCustomerInformationBehaviour } from './CustomerInformation.behaviour'
 
 jest.mock('app/shared/components/CustomerAutocomplete', () => ({
   __esModule: true,
@@ -31,7 +31,7 @@ describe('CustomerInformation', () => {
   })
 
   it('renders nothing if customer is null', () => {
-    useCustomerInformationBehaviour.mockReturnValue({
+    (useCustomerInformationBehaviour as jest.Mock).mockReturnValue({
       states: { customer: null, disabled: false },
       handlers: { onChangeCustomer: mockOnChangeCustomer },
     })
@@ -42,7 +42,7 @@ describe('CustomerInformation', () => {
   })
 
   it('renders customer information when provided', () => {
-    useCustomerInformationBehaviour.mockReturnValue({
+    (useCustomerInformationBehaviour as jest.Mock).mockReturnValue({
       states: { customer: mockCustomer, disabled: false },
       handlers: { onChangeCustomer: mockOnChangeCustomer },
     })
@@ -56,7 +56,7 @@ describe('CustomerInformation', () => {
   })
 
   it('renders CustomerAutocomplete with correct props', () => {
-    useCustomerInformationBehaviour.mockReturnValue({
+    (useCustomerInformationBehaviour as jest.Mock).mockReturnValue({
       states: { customer: mockCustomer, disabled: false },
       handlers: { onChangeCustomer: mockOnChangeCustomer },
     })

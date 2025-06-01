@@ -1,7 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { useViewModel } from '../../viewModel/InvoiceShow.ViewModelProvider'
 import { Product, Invoice } from 'types'
-import { set } from 'lodash'
 
 type InvoiceLines = Invoice['invoice_lines']
 

@@ -85,6 +85,7 @@ export const useInvoicesListBehaviour =
 
     useEffect(() => {
       fetchInvoices()
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     return {

@@ -98,7 +98,6 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
         paid: updatedInvoice.paid,
         date: updatedInvoice.date,
         deadline: updatedInvoice.deadline,
-        // TODO: Handle invoice lines here?
         invoice_lines_attributes: [],
       })
       .then((updatedInvoiceFromNetwork) => {
