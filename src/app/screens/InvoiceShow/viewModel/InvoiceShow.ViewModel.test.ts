@@ -315,4 +315,48 @@ describe('InvoiceShowViewModel', () => {
     const resultingInvoice = viewModel.getInvoice()
     expect(resultingInvoice?.invoice_lines[0].quantity).toBe(1000)
   })
+
+  it('should not update a finalized invoice', async () => {
+    // given
+    const viewModel = getViewModelWithMockedRepositoryResponses({
+      getInvoiceResponse: { finalized: true },
+    })
+
+    // when
+    await viewModel.fetchInvoice('12345')
+
+    // then
+    expect(() => {
+      viewModel.setDate('2023-10-01')
+    }).toThrow("Can't modify a finalized invoice")
+  })
+
+  it.only('should not delete a finalized invoice', async () => {
+    // given
+    const viewModel = getViewModelWithMockedRepositoryResponses({
+      getInvoiceResponse: { finalized: true },
+    })
+
+    // when
+    await viewModel.fetchInvoice('12345')
+
+    await expect(viewModel.deleteInvoice()).rejects.toThrow(
+      "Can't modify a finalized invoice"
+    )
+  })
+
+  it('should not update invoice line attributes of a finalized invoice', async () => {
+    // given
+    const viewModel = getViewModelWithMockedRepositoryResponses({
+      getInvoiceResponse: { finalized: true },
+    })
+
+    // when
+    await viewModel.fetchInvoice('12345')
+
+    // then
+    expect(() => {
+      viewModel.setInvoiceLineProductId(1, 202)
+    }).toThrow("Can't modify a finalized invoice")
+  })
 })

@@ -33,6 +33,7 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
     lineId: number,
     attributes: Partial<{ product_id: number; quantity: number }>
   ): void {
+    this.throwIfInvoiceIsFinalized(invoice)
     if (invoice && invoice.customer_id) {
       const updatedLines = invoice.invoice_lines.map((line) =>
         line.id === lineId
@@ -61,6 +62,12 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
     this.invoice.next(invoice)
   }
 
+  private throwIfInvoiceIsFinalized(invoice: Invoice | null): void {
+    if (invoice && invoice.finalized) {
+      throw new Error("Can't modify a finalized invoice")
+    }
+  }
+
   public getInvoice(): Invoice | null {
     return this.invoice.getValue()
   }
@@ -79,6 +86,7 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
 
   private updateInvoice(updateField: Partial<Invoice>): void {
     const invoice = this.getInvoice()
+    this.throwIfInvoiceIsFinalized(invoice)
     if (!invoice || !invoice.customer_id) {
       throw new Error('No invoice to update')
     }
@@ -168,6 +176,7 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
 
   async deleteInvoice(): Promise<void> {
     const invoice = this.getInvoice()
+    this.throwIfInvoiceIsFinalized(invoice)
     if (invoice) {
       const deleted = await this.invoiceRepository.deleteInvoice(
         invoice.id.toString()
