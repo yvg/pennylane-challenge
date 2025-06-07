@@ -6,6 +6,7 @@ const getInvoiceRepository = (methodOverrides?: Partial<OperationMethods>) => {
     getInvoice: jest.fn(),
     putInvoice: jest.fn(),
     deleteInvoice: jest.fn(),
+    getInvoices: jest.fn(),
     ...methodOverrides,
   } as Partial<OperationMethods> as Client)
 }
@@ -47,6 +48,99 @@ describe('Invoices Repository', () => {
     // when-then
     await expect(invoicesRepository.getInvoice('12345')).rejects.toThrow(
       'Failed to fetch invoice with ID 12345'
+    )
+  })
+
+  it('should create an invoice', async () => {
+    // given
+    const invoicesRepository = getInvoiceRepository({
+      postInvoices: jest.fn().mockResolvedValue({
+        status: 200,
+        data: {
+          id: '12345',
+          customer_id: 1337,
+          finalized: false,
+          paid: false,
+          date: null,
+          deadline: null,
+          invoice_lines: [],
+        },
+      }),
+    })
+
+    // when
+    const invoice = await invoicesRepository.createInvoice(1337)
+
+    // then
+    expect(invoice).toBeDefined()
+    expect(invoice.id).toBe('12345')
+  })
+
+  it('should throw an error if creating an invoice fails', async () => {
+    // given
+    const invoicesRepository = getInvoiceRepository({
+      postInvoices: jest.fn().mockResolvedValue({
+        status: 500,
+      }),
+    })
+
+    // when-then
+    await expect(invoicesRepository.createInvoice(1337)).rejects.toThrow(
+      'Failed to create invoice'
+    )
+  })
+
+  it('should fetch all invoices', async () => {
+    // given
+    const invoicesRepository = getInvoiceRepository({
+      getInvoices: jest.fn().mockResolvedValue({
+        status: 200,
+        data: {
+          invoices: [
+            {
+              id: '12345',
+              customer_id: 1,
+              finalized: false,
+              paid: false,
+              date: null,
+              deadline: null,
+              invoice_lines: [],
+            },
+            {
+              id: '67890',
+              customer_id: 2,
+              finalized: true,
+              paid: true,
+              date: '2025-06-07',
+              deadline: '2025-06-14',
+              invoice_lines: [],
+            },
+          ],
+        },
+      }),
+    })
+
+    // when
+    const invoices = await invoicesRepository.getInvoices()
+
+    // then
+    expect(invoices).toBeDefined()
+    expect(invoices.length).toBe(2)
+    expect(invoices[0].id).toBe('12345')
+    expect(invoices[1].id).toBe('67890')
+  })
+
+  it('should throw an error if fetching invoices fails', async () => {
+    // given
+    const invoicesRepository = getInvoiceRepository({
+      getInvoices: jest.fn().mockResolvedValue({
+        status: 500,
+      }),
+    })
+
+    // when-then
+    await expect(invoicesRepository.getInvoices()).rejects.toThrow(
+      'Failed to fetch invoices'
     )
   })
 

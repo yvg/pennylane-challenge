@@ -40,18 +40,28 @@ const buildInvoiceRepositoryResponse = (
 
 const getMockedInvoiceRepositoryToOverrideMethods = ({
   getInvoice,
+  getInvoices,
+  getInvoicesByCustomerId,
+  createInvoice,
   updateInvoice,
   deleteInvoice,
 }: {
   getInvoice?: InvoiceRepository['getInvoice']
+  getInvoices?: InvoiceRepository['getInvoices']
+  getInvoicesByCustomerId?: InvoiceRepository['getInvoicesByCustomerId']
+  createInvoice?: InvoiceRepository['createInvoice']
   updateInvoice?: InvoiceRepository['updateInvoice']
   deleteInvoice?: InvoiceRepository['deleteInvoice']
 }): InvoiceRepository => ({
+  getInvoices: getInvoices ?? jest.fn(),
+  getInvoicesByCustomerId:
+    getInvoicesByCustomerId ?? jest.fn().mockResolvedValue([]),
   getInvoice:
     getInvoice ?? jest.fn().mockResolvedValue(buildInvoiceRepositoryResponse()),
   // TODO: This only works because methods relying on it are not async, but it should be mocked.
   updateInvoice: updateInvoice ?? jest.fn(),
   deleteInvoice: deleteInvoice ?? jest.fn(),
+  createInvoice: createInvoice ?? jest.fn(),
 })
 
 const getViewModelWithMockedRepositoryResponses = (

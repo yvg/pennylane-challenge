@@ -8,11 +8,11 @@ import { StatusInformation } from './components/StatusInformation/StatusInformat
 import { Invoicelines } from './components/InvoiceLines/InvoiceLines'
 import { InvoiceActions } from './components/InvoiceActions/InvoiceActions'
 
-import './InvoiceShow.css'
+import './InvoiceShow.screen.css'
 
 // TODO: Error boundaries should be used here
 
-export const InvoiceShow = () => {
+export const InvoiceShowScreen = () => {
   const invoiceViewModel = getInvoiceShowViewModel()
   const { id } = useParams<{ id: string }>()
   const [isLoading, setIsLoading] = useState<boolean>(true)

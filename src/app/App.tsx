@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
-import { InvoicesList } from './screens/InvoicesList/InvoicesList'
-import { InvoiceShow } from './screens/InvoiceShow/InvoiceShow'
+import { InvoicesListScreen } from './screens/InvoicesList/InvoicesList.screen'
+import { InvoiceShowScreen } from './screens/InvoiceShow/InvoiceShow.screen'
 import './App.css'
 // import GettingStarted from './GettingStarted'
 
@@ -11,8 +11,8 @@ function App() {
       {/* <GettingStarted /> */}
       <Router>
         <Routes>
-          <Route path="/invoice/:id" Component={InvoiceShow} />
-          <Route path="/" Component={InvoicesList} />
+          <Route path="/invoice/:id" Component={InvoiceShowScreen} />
+          <Route path="/" Component={InvoicesListScreen} />
         </Routes>
       </Router>
     </div>

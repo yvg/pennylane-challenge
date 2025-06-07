@@ -1,0 +1,48 @@
+.invoices-list-header, .invoices-list-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  align-items: center;
+  padding: 12px 16px;
+}
+.invoices-list-header {
+  font-weight: bold;
+  background: #f3f4f6;
+  border-bottom: 2px solid #e5e7eb;
+}
+.invoices-list-row {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.invoices-list-row:nth-child(odd) {
+  background: #fafafa;
+}
+
+.invoices-list-row:hover {
+  background: #f3fcf7;
+}
+
+.invoices-list-status.paid {
+  color: #16a34a;
+}
+
+.invoices-list-status.draft {
+  color: #f59e0b;
+}
+
+.invoices-list-status.overdue {
+  color: #dc2626;
+  font-weight: bold;
+}
+
+.invoices-list-status.overdue::before {
+  content: '⚠️';
+  margin-right: 4px;
+}
+
+.invoices-list-status.finalized{
+  color: #2563eb;
+}
