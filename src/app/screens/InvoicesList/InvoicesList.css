@@ -13,3 +13,20 @@
     gap: 10px;
   }
 }
+
+#invoice-creation-dialog::backdrop {
+  background: #000;
+  opacity: 0.75;
+}
+
+#invoice-creation-dialog {
+  z-index: 10;
+  overflow: visible;
+}
+
+.invoice-creation-dialog-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}

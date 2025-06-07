@@ -224,20 +224,6 @@ describe('InvoiceShowViewModel', () => {
     expect(viewModel.getInvoice()).toBeDefined()
   })
 
-  // TODO
-  xit('should throw an error when updating a finalized invoice', async () => {
-    // given
-    // const viewModel = getViewModel({
-    //   finalized: true,
-    // })
-    // // when
-    // await viewModel.fetchInvoice('12345')
-    // // then
-    // expect(() => {
-    //   viewModel.setDate('2023-10-01')
-    // }).toThrow('Cannot update a finalized invoice')
-  })
-
   it('should update product ID in invoice line', async () => {
     // given
     const viewModel = getViewModelWithMockedRepositoryResponses({
@@ -331,7 +317,7 @@ describe('InvoiceShowViewModel', () => {
     }).toThrow("Can't modify a finalized invoice")
   })
 
-  it.only('should not delete a finalized invoice', async () => {
+  it('should not delete a finalized invoice', async () => {
     // given
     const viewModel = getViewModelWithMockedRepositoryResponses({
       getInvoiceResponse: { finalized: true },
@@ -358,5 +344,32 @@ describe('InvoiceShowViewModel', () => {
     expect(() => {
       viewModel.setInvoiceLineProductId(1, 202)
     }).toThrow("Can't modify a finalized invoice")
+  })
+
+  it('should set the date of the invoice if not provided', async () => {
+    // given
+    const viewModel = getViewModelWithMockedRepositoryResponses({
+      getInvoiceResponse: { date: null },
+    })
+    const expectedDateFormat = /^\d{4}-\d{2}-\d{2}$/
+
+    // when
+    await viewModel.fetchInvoice('12345')
+
+    // then
+    expect(viewModel.getInvoice()?.date).toMatch(expectedDateFormat)
+  })
+
+  it('should not set the date of the invoice if already provided', async () => {
+    // given
+    const viewModel = getViewModelWithMockedRepositoryResponses({
+      getInvoiceResponse: { date: '2023-10-01' },
+    })
+
+    // when
+    await viewModel.fetchInvoice('12345')
+
+    // then
+    expect(viewModel.getInvoice()?.date).toBe('2023-10-01')
   })
 })

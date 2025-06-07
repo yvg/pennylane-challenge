@@ -1,5 +1,5 @@
 import { useApi } from 'api'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Customer, Invoice } from 'types'
 
@@ -10,11 +10,15 @@ type UseInvoicesListBehaviourReturnType = {
     ) => (event: React.MouseEvent<HTMLButtonElement>) => void
     onClickAdd: () => void
     onChangeCustomer: (customer: Invoice['customer'] | null) => void
+    toggleCustomerDialog: () => void
   }
   states: {
     invoicesList: Invoice[]
     isCreateButtonDisabled: boolean
     customerToAdd: Customer | null
+  }
+  refs: {
+    dialogRef: React.RefObject<HTMLDialogElement>
   }
 }
 
@@ -24,6 +28,7 @@ export const useInvoicesListBehaviour =
     const navigate = useNavigate()
     const [isCreateButtonDisabled, setIsCreateButtonDisabled] = useState(true)
     const [customerToAdd, setCustomerToAdd] = useState<Customer | null>(null)
+    const dialogRef = useRef<HTMLDialogElement>(null)
 
     const [invoicesList, setInvoicesList] = useState<Invoice[]>([])
 
@@ -83,6 +88,16 @@ export const useInvoicesListBehaviour =
       [setCustomerToAdd, setIsCreateButtonDisabled]
     )
 
+    const toggleCustomerDialog = useCallback(() => {
+      if (dialogRef.current) {
+        if (dialogRef.current.open) {
+          dialogRef.current.close()
+        } else {
+          dialogRef.current.showModal()
+        }
+      }
+    }, [dialogRef])
+
     useEffect(() => {
       fetchInvoices()
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -93,12 +108,15 @@ export const useInvoicesListBehaviour =
         onClickDelete,
         onClickAdd,
         onChangeCustomer,
+        toggleCustomerDialog,
       },
-
       states: {
         invoicesList,
         isCreateButtonDisabled,
         customerToAdd,
+      },
+      refs: {
+        dialogRef,
       },
     }
   }

@@ -25,8 +25,6 @@ type UseInvoicelinesBehaviourReturnType = {
     onChangeQuantity: (invoiceLineId: number, quantity: string) => void
     onChangeProduct: (invoiceLineIneId: number, productId: number) => void
     onChangeAddProduct: (product: Product | null) => void
-    onClickAddNewLine: () => void
-    onClickCancelNewLine: () => void
   }
 }
 
@@ -100,21 +98,9 @@ export const useInvoicelinesBehaviour =
           unitPrice: product.unit_price,
           amount: product.unit_price,
         })
-      }
-    }
-
-    const onClickAddNewLine = () => {
-      if (productToAdd && newLine.quantity) {
-        viewModel.createInvoiceLine(
-          productToAdd.id,
-          parseInt(newLine.quantity, 10)
-        )
+        viewModel.createInvoiceLine(product.id, 1)
         resetNewLine()
       }
-    }
-
-    const onClickCancelNewLine = () => {
-      resetNewLine()
     }
 
     const resetNewLine = () => {
@@ -136,8 +122,6 @@ export const useInvoicelinesBehaviour =
         onClickDeleteButton,
         onChangeQuantity,
         onChangeAddProduct,
-        onClickAddNewLine,
-        onClickCancelNewLine,
       },
     }
   }

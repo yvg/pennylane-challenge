@@ -6,9 +6,7 @@ import './InvoiceLines.css'
 export const Invoicelines = () => {
   const {
     states: { invoiceLines, displayInvoiceLines, disabled, newLine, productToAdd, totalAmount },
-    handlers: { onClickDeleteButton, onChangeQuantity, onChangeProduct, onChangeAddProduct,
-      onClickAddNewLine, onClickCancelNewLine
-     },
+    handlers: { onClickDeleteButton, onChangeQuantity, onChangeProduct, onChangeAddProduct },
   } = useInvoicelinesBehaviour()
   return (
     <div>
@@ -38,11 +36,18 @@ export const Invoicelines = () => {
               <td>{line.vat_rate.toString()}%</td>
               <td>{line.product.unit_price}</td>
               <td>{line.price}</td>
-              <th><button disabled={disabled} onClick={() => onClickDeleteButton(line.id)}>Delete</button></th>
+              <td><button disabled={disabled} onClick={() => onClickDeleteButton(line.id)}>Delete</button></td>
             </tr>
           ))}
           </tbody>
-}
+          }
+          {!displayInvoiceLines && (
+            <tbody>
+              <tr>
+                <td colSpan={8}>Search products to add to the invoice</td>
+              </tr>
+            </tbody>
+          )}
           <tfoot>
           <tr>
             <td><ProductAutocomplete disabled={disabled} onChange={onChangeAddProduct} value={productToAdd} /></td>
@@ -52,10 +57,7 @@ export const Invoicelines = () => {
             <td>{newLine.vatRate}</td>
             <td>{newLine.unitPrice}</td>
             <td>{newLine.amount}</td>
-            <td>
-              <button disabled={disabled || !newLine.quantity} onClick={onClickAddNewLine}>Add line</button>&nbsp;
-              {newLine.quantity && <button onClick={onClickCancelNewLine}>Cancel</button>}
-            </td>
+            <td></td>
           </tr>
           <tr>
             <td colSpan={6} className="total-label">Total:</td>

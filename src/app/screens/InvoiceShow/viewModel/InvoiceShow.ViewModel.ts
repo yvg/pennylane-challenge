@@ -82,6 +82,17 @@ export class InvoiceShowViewModel implements IInvoiceShowViewModel {
   async fetchInvoice(id: string) {
     const invoice = await this.invoiceRepository.getInvoice(id)
     this.setInvoice(invoice)
+    if (!invoice.date) {
+      this.addDateIfNotExisting()
+    }
+  }
+
+  private addDateIfNotExisting(): void {
+    const invoice = this.getInvoice()
+    if (invoice && !invoice.date) {
+      const today = new Date().toISOString().split('T')[0]
+      this.setDate(today)
+    }
   }
 
   private updateInvoice(updateField: Partial<Invoice>): void {
