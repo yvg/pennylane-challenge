@@ -15,7 +15,7 @@ export const InvoicesList = () => {
             <span>Status</span>
             <span>Customer</span>
             <span>Total</span>
-            <span>Paid</span>
+            <span></span>
           </div>
           {invoicesList.map((invoice) => (
             <Link

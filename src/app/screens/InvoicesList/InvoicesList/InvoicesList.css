@@ -21,6 +21,10 @@
   background: #fafafa;
 }
 
+.invoices-list-row:has(.invoices-list-status.overdue) {
+  background: #fee2e2;
+}
+
 .invoices-list-row:hover {
   background: #f3fcf7;
 }
