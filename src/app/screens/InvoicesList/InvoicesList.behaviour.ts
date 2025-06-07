@@ -1,5 +1,12 @@
 import { useApi } from 'api'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { set } from 'lodash'
+import {
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Customer, Invoice } from 'types'
 
@@ -11,14 +18,21 @@ type UseInvoicesListBehaviourReturnType = {
     onClickAdd: () => void
     onChangeCustomer: (customer: Invoice['customer'] | null) => void
     toggleCustomerDialog: () => void
+    onSearchCustomer: (customer: Customer | null) => void
+    onDateFilter: ChangeEventHandler<HTMLInputElement>
   }
   states: {
     invoicesList: Invoice[]
     isCreateButtonDisabled: boolean
+    customerToFilter: Customer | null
     customerToAdd: Customer | null
+    filterStartDate: string
+    filterEndDate: string
   }
   refs: {
     dialogRef: React.RefObject<HTMLDialogElement>
+    startDateFilterRef: React.RefObject<HTMLInputElement>
+    endDateFilterRef: React.RefObject<HTMLInputElement>
   }
 }
 
@@ -28,9 +42,15 @@ export const useInvoicesListBehaviour =
     const navigate = useNavigate()
     const [isCreateButtonDisabled, setIsCreateButtonDisabled] = useState(true)
     const [customerToAdd, setCustomerToAdd] = useState<Customer | null>(null)
-    const dialogRef = useRef<HTMLDialogElement>(null)
-
+    const [customerToFilter, setCustomerToFilter] = useState<Customer | null>(
+      null
+    )
     const [invoicesList, setInvoicesList] = useState<Invoice[]>([])
+    const dialogRef = useRef<HTMLDialogElement>(null)
+    const startDateFilterRef = useRef<HTMLInputElement>(null)
+    const endDateFilterRef = useRef<HTMLInputElement>(null)
+    const [filterStartDate, setFilterStartDate] = useState<string>('')
+    const [filterEndDate, setFilterEndDate] = useState<string>('')
 
     const fetchInvoices = useCallback(async () => {
       const { data } = await api.getInvoices()
@@ -99,6 +119,54 @@ export const useInvoicesListBehaviour =
     }, [dialogRef])
 
     useEffect(() => {
+      if (customerToFilter) {
+        api
+          .getInvoices({
+            filter: `[{"field":"customer_id","operator":"eq","value":${customerToFilter.id}}]`,
+          })
+          .then((response) => {
+            setInvoicesList(response.data.invoices)
+          })
+      } else {
+        fetchInvoices()
+      }
+    }, [customerToFilter, api, fetchInvoices])
+
+    const onSearchCustomer = useCallback((customer: Customer | null) => {
+      setCustomerToFilter(customer)
+    }, [])
+
+    const onDateFilter = useCallback(
+      (event: React.ChangeEvent<HTMLInputElement>) => {
+        console.log('##', invoicesList)
+        if (event.target.value === '') {
+          console.log('Resetting date filter')
+          fetchInvoices()
+          return false
+        }
+        if (startDateFilterRef.current && endDateFilterRef.current) {
+          const startDate = startDateFilterRef.current.value
+          const endDate = endDateFilterRef.current.value
+
+          setFilterStartDate(startDate)
+          setFilterEndDate(endDate)
+
+          if (startDate && endDate) {
+            const filteredInvoices = invoicesList.filter((invoice) => {
+              const invoiceDate = new Date(invoice.date || '')
+              return (
+                invoiceDate >= new Date(startDate) &&
+                invoiceDate <= new Date(endDate)
+              )
+            })
+            setInvoicesList(filteredInvoices)
+          }
+        }
+      },
+      [invoicesList, fetchInvoices, startDateFilterRef, endDateFilterRef]
+    )
+
+    useEffect(() => {
       fetchInvoices()
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -109,14 +177,21 @@ export const useInvoicesListBehaviour =
         onClickAdd,
         onChangeCustomer,
         toggleCustomerDialog,
+        onSearchCustomer,
+        onDateFilter,
       },
       states: {
         invoicesList,
         isCreateButtonDisabled,
+        customerToFilter,
         customerToAdd,
+        filterEndDate,
+        filterStartDate,
       },
       refs: {
         dialogRef,
+        endDateFilterRef,
+        startDateFilterRef,
       },
     }
   }

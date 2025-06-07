@@ -9,6 +9,7 @@ interface Props {
   value: Customer | null
   onChange: (Customer: Customer | null) => void
   disabled?: boolean
+  placeholder?: string
 }
 
 const defaultAdditional = { page: 1 }
@@ -17,7 +18,7 @@ const getCustomerLabel = (customer: Customer) => {
   return `${customer.first_name} ${customer.last_name}`
 }
 
-const CustomerAutocomplete = ({ value, onChange, disabled }: Props) => {
+const CustomerAutocomplete = ({ value, onChange, disabled, placeholder }: Props) => {
   const api = useApi()
 
   const loadOptions: LoadOptions<Customer, GroupBase<Customer>, {page: number}> = useCallback(
@@ -42,9 +43,10 @@ const CustomerAutocomplete = ({ value, onChange, disabled }: Props) => {
 
   return (
     <AsyncPaginate
-      placeholder="Search a customer"
+      placeholder={placeholder ?? "Search a customer"}
       getOptionLabel={getCustomerLabel}
       additional={defaultAdditional}
+      defaultAdditional={defaultAdditional}
       value={value}
       onChange={onChange}
       loadOptions={loadOptions}

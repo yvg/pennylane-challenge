@@ -30,3 +30,20 @@
   gap: 10px;
   margin-top: 10px;
 }
+
+.InvoiceList-filter {
+  margin: 20px 0;
+  display: flex;
+
+  & .InvoiceList-filter-customer {
+    width: 200px;
+    display: flex;
+    gap: 10px;
+  }
+
+  & .InvoiceList-filter-date {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+}

@@ -22,7 +22,6 @@ export const InvoiceShow = () => {
       invoiceViewModel.fetchInvoice(id).then(() => {
         setIsLoading(false)
       })
-
     }
   }, [id, invoiceViewModel])
 
