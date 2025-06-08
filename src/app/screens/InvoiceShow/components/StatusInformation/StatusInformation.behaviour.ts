@@ -5,7 +5,6 @@ type Status = {
   paid: boolean
   date: string | null
   deadline: string | null
-  invoice_id: string
 }
 
 type UseStatusInformationBehaviourReturnType = {
@@ -37,7 +36,6 @@ export const useStatusInformationBehaviour =
           paid: invoice.paid,
           date: invoice.date,
           deadline: invoice.deadline,
-          invoice_id: invoice.id.toString(),
         })
         setDisabled(invoice.finalized)
       }

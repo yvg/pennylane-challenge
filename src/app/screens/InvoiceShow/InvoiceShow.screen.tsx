@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useParams } from 'react-router'
 
 import { CustomerInformation } from 'app/screens/InvoiceShow/components/CustomerInformation/CustomerInformation'
@@ -9,6 +10,7 @@ import { Invoicelines } from './components/InvoiceLines/InvoiceLines'
 import { InvoiceActions } from './components/InvoiceActions/InvoiceActions'
 
 import './InvoiceShow.screen.css'
+
 
 // TODO: Error boundaries should be used here
 
@@ -26,24 +28,22 @@ export const InvoiceShowScreen = () => {
   }, [id, invoiceViewModel])
 
   if (isLoading) {
-    return <div>Loading...</div>
+    return <div>Loading…</div>
   }
 
   return (
     <ViewModelContextProvider viewModelFactory={() => invoiceViewModel}>
       <div>
         <header className="invoice-header">
-          <div className="invoice-header-actions">
+          <Link to="/">⬅ Back to invoices</Link>
+          <div className="invoice-header-title">
+            <h2>Invoice {id}</h2>
             <InvoiceActions />
           </div>
           <div className="invoice-header-information">
-            <div>
-              <StatusInformation />
-            </div>
-            <div>
-              <CustomerInformation />
-            </div>
+            <CustomerInformation />
           </div>
+          <StatusInformation />
         </header>
         <Invoicelines />
       </div>

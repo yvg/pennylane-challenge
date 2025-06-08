@@ -1,0 +1,12 @@
+.status-information {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.status-information-details {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}

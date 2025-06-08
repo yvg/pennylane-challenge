@@ -1,6 +1,7 @@
 .InvoiceList-filter {
-  margin: 20px 0;
+  margin: 20px 0 0 0;
   display: flex;
+  padding-bottom: 30px;
 
   & .InvoiceList-filter-customer {
     width: 200px;

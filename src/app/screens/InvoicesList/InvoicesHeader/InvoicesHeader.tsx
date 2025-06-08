@@ -7,7 +7,7 @@ export const InvoicesHeader = () => {
   const { handlers: { toggleCustomerDialog, onChangeCustomer, onClickAdd }, states: { isCreateButtonDisabled, customerToAdd }, refs : { dialogRef } } = useInvoicesHeader()
 
   return (
-    <header className={'invoiceList-header'}>
+    <header className="invoiceList-header">
       <h1>Invoices</h1>
       <div>
         {/* Using a ref to allow the usage of CSS backdrop we get from showModal method on dialog element */}

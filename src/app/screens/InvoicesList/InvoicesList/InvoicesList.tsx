@@ -12,7 +12,7 @@ export const InvoicesList = () => {
             <span>Date</span>
             <span>Deadline</span>
             <span>Number</span>
-            <span>Status</span>
+            <span>Status{/*<button onClick={onClickSortByStatus}>˅</button>*/}</span>
             <span>Customer</span>
             <span>Total</span>
             <span></span>

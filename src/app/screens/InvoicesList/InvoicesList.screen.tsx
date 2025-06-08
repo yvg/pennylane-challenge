@@ -5,6 +5,8 @@ import { InvoicesFilters } from './InvoicesFilters/InvoicesFilters'
 import { InvoicesList } from './InvoicesList/InvoicesList'
 import { getInvoicesList2ViewModel } from './viewModel/InvoicesList2.ViewModel.provider'
 
+import './InvoicesList.screen.css'
+
 export const InvoicesListScreen = () => {
   const invoicesViewModel = getInvoicesList2ViewModel()
   const [isLoading, setIsLoading] = useState<boolean>(true)
@@ -21,11 +23,11 @@ export const InvoicesListScreen = () => {
 
   return (
     <ViewModelContextProvider viewModelFactory={() => invoicesViewModel}>
-      <div>
+      <div className="invoices-list-top">
         <InvoicesHeader />
         <InvoicesFilters />
-        <InvoicesList />
       </div>
+      <InvoicesList />
     </ViewModelContextProvider>
   )
 }
