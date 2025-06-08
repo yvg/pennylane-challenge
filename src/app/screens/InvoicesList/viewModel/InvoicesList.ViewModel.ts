@@ -62,4 +62,28 @@ export class InvoicesList2ViewModel implements IInvoicesList2ViewModel {
     })
     this.invoices.next(filteredInvoices)
   }
+
+  /** Filtering on the front-end, the BE filter does not seem to allow it */
+  public filterInvoicesByStatus(status: string) {
+    this.fetchInvoices().then(() => {
+      const filteredInvoices = this.invoices.value.filter((invoice) => {
+        const isOverdue =
+          invoice.deadline &&
+          new Date(invoice.deadline).setHours(0, 0, 0, 0) <
+            new Date().setHours(0, 0, 0, 0) &&
+          !invoice.paid &&
+          !invoice.finalized
+        if (status === 'all') return true
+        if (status === 'paid') return invoice.paid && !invoice.finalized
+        if (status === 'finalized') return invoice.finalized
+        if (status === 'draft')
+          return !invoice.finalized && !invoice.paid && !isOverdue
+        if (status === 'overdue') {
+          return isOverdue
+        }
+        return false
+      })
+      this.invoices.next(filteredInvoices)
+    })
+  }
 }

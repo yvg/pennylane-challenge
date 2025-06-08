@@ -1,6 +1,6 @@
 import { useEffect, useState, useSyncExternalStore } from 'react'
 import { Invoice } from 'types'
-import { useViewModel } from '../viewModel/InvoicesList2.ViewModelProvider'
+import { useViewModel } from '../viewModel/InvoicesList.ViewModelProvider'
 
 type InvoiceWithStatus = Invoice & {
   status: string
@@ -9,6 +9,7 @@ type InvoiceWithStatus = Invoice & {
 type UseInvoicesListBehaviourReturnType = {
   handlers: {
     onClickDelete: (id: number) => void
+    onClickSortByStatus: () => void
   }
   states: {
     invoicesList: InvoiceWithStatus[]
@@ -53,9 +54,30 @@ export const useInvoicesListBehaviour =
       setInvoicesList(invoicesWithStatus)
     }, [invoices])
 
+    const onClickSortByStatus = () => {
+      const sortedInvoices = [...invoicesList].sort((a, b) => {
+        const statusOrder: Record<
+          'overdue' | 'finalized' | 'paid' | 'draft',
+          number
+        > = {
+          overdue: 1,
+          finalized: 2,
+          paid: 3,
+          draft: 4,
+        }
+        return (
+          statusOrder[a.status as keyof typeof statusOrder] -
+            statusOrder[b.status as keyof typeof statusOrder] ||
+          (a.date ?? '').localeCompare(b.date ?? '')
+        )
+      })
+      setInvoicesList(sortedInvoices)
+    }
+
     return {
       handlers: {
         onClickDelete,
+        onClickSortByStatus,
       },
       states: {
         invoicesList,

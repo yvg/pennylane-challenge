@@ -1,5 +1,5 @@
 import { getAxiosClient } from 'api'
-import { InvoicesList2ViewModel } from './InvoicesList2.ViewModel'
+import { InvoicesList2ViewModel } from './InvoicesList.ViewModel'
 import { InvoiceRepositoryImpl } from 'app/shared/repositories/invoicesRepository/invoicesRepository'
 import { config } from 'app/config'
 

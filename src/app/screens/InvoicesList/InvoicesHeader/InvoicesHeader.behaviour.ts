@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react'
-import { useViewModel } from '../viewModel/InvoicesList2.ViewModelProvider'
+import { useViewModel } from '../viewModel/InvoicesList.ViewModelProvider'
 import { Customer } from 'types'
 import { useNavigate } from 'react-router-dom'
 

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { ViewModelContextProvider } from './viewModel/InvoicesList2.ViewModelProvider'
+import { ViewModelContextProvider } from './viewModel/InvoicesList.ViewModelProvider'
 import { InvoicesHeader } from './InvoicesHeader/InvoicesHeader'
 import { InvoicesFilters } from './InvoicesFilters/InvoicesFilters'
 import { InvoicesList } from './InvoicesList/InvoicesList'
-import { getInvoicesList2ViewModel } from './viewModel/InvoicesList2.ViewModel.provider'
+import { getInvoicesList2ViewModel } from './viewModel/InvoicesList.ViewModel.provider'
 
 import './InvoicesList.screen.css'
 

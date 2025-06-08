@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react'
-import { useViewModel } from '../viewModel/InvoicesList2.ViewModelProvider'
+import { useViewModel } from '../viewModel/InvoicesList.ViewModelProvider'
 import { Customer } from 'types'
 
 type InvoicesFiltersBehaviourReturnType = {
@@ -10,6 +10,7 @@ type InvoicesFiltersBehaviourReturnType = {
   handlers: {
     onSearchCustomer: (customer: Customer | null) => void
     onDateFilter: (e: React.ChangeEvent<HTMLInputElement>) => void
+    onStatusFilter: (e: React.ChangeEvent<HTMLSelectElement>) => void
   }
   refs: {
     startDateFilterRef: React.RefObject<HTMLInputElement>
@@ -53,6 +54,14 @@ export const useInvoicesFiltersBehaviour =
       }
     }, [viewModel])
 
+    const onStatusFilter = useCallback(
+      (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const status = e.target.value
+        viewModel.filterInvoicesByStatus(status)
+      },
+      [viewModel]
+    )
+
     return {
       states: {
         customerToFilter,
@@ -61,6 +70,7 @@ export const useInvoicesFiltersBehaviour =
       handlers: {
         onSearchCustomer,
         onDateFilter,
+        onStatusFilter,
       },
       refs: {
         startDateFilterRef,

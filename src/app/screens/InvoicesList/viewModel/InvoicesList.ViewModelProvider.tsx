@@ -1,5 +1,5 @@
 import React, { FC, PropsWithChildren, useContext, useState } from 'react'
-import { InvoicesList2ViewModel } from './InvoicesList2.ViewModel'
+import { InvoicesList2ViewModel } from './InvoicesList.ViewModel'
 
 const ViewModelContext = React.createContext<
   { viewModel: InvoicesList2ViewModel } | undefined
