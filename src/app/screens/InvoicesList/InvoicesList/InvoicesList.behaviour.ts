@@ -28,7 +28,15 @@ export const useInvoicesListBehaviour =
     )
 
     const onClickDelete = (id: number) => {
-      viewModel.deleteInvoice(id.toString())
+      if (
+        window.confirm(
+          "Are you sure you want to delete this invoice? This action can't be undone."
+        )
+      ) {
+        viewModel.deleteInvoice(id.toString()).catch(() => {
+          alert('Something went wrong while deleting the invoice')
+        })
+      }
     }
 
     useEffect(() => {

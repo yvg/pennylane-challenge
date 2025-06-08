@@ -30,7 +30,7 @@ export const Invoicelines = () => {
           {invoiceLines.map((line) => (
             <tr key={line.id}>
               <td><ProductAutocomplete disabled={disabled} onChange={(product) => product && onChangeProduct(line.id, product.id)} value={line.product} /></td>
-              <td><input placeholder="0" disabled={disabled} defaultValue={line.quantity} onChange={(event) => onChangeQuantity(line.id, event.target.value)} size={3} type="number" pattern="\d+" /></td>
+              <td><input min={1} placeholder="0" disabled={disabled} defaultValue={line.quantity} onChange={(event) => onChangeQuantity(line.id, event.target.value)} size={3} type="number" pattern="\d+" /></td>
               <td>{line.unit}</td>
               <td>{line.product.unit_price_without_tax}</td>
               <td>{line.vat_rate.toString()}%</td>
