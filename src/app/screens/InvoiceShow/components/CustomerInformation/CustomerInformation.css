@@ -1,0 +1,11 @@
+.customer-information {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.customer-information p {
+  margin: 4px 0;
+}
